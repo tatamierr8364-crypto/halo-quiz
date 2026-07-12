@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ヘイロークイズ — ブルーアーカイブ</title>
+<style>
+  :root {
+    --ba-blue: #128afa;
+    --ba-blue-dark: #0b6ac4;
+    --ba-navy: #2d3746;
+    --ba-sky: #63c8f6;
+    --ba-yellow: #fdd35c;
+    --correct: #2eb872;
+    --wrong: #e8534f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", sans-serif;
+    background: linear-gradient(160deg, #eaf4fd 0%, #f7fbff 45%, #dceefb 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ba-navy);
+    padding: 16px 0;
+  }
+  .card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(18, 138, 250, 0.15);
+    width: min(840px, 96vw);
+    padding: 34px 32px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--ba-blue), var(--ba-sky));
+    z-index: 5;
+  }
+  h1 { font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 4px; }
+  h1 .halo { color: var(--ba-blue); }
+  .subtitle { color: #7d8a99; font-size: 0.85rem; margin-bottom: 28px; }
+
+  /* ---------- start screen ---------- */
+  .mode-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
+  .mode-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 26px; flex-wrap: wrap; }
+  .mode-btn {
+    border: 2px solid #d5e5f2;
+    background: #fff;
+    border-radius: 12px;
+    padding: 10px 22px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ba-navy);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .mode-btn:hover { border-color: var(--ba-sky); }
+  .mode-btn.selected {
+    background: var(--ba-blue);
+    border-color: var(--ba-blue);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(18, 138, 250, 0.35);
+  }
+  .primary-btn {
+    background: linear-gradient(135deg, var(--ba-blue), var(--ba-blue-dark));
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 60px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(18, 138, 250, 0.4);
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .primary-btn:hover { transform: translateY(-2px); box-shadow: 0 9px 22px rgba(18, 138, 250, 0.45); }
+  .primary-btn:active { transform: translateY(0); }
+
+  /* ---------- quiz screen ---------- */
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #7d8a99;
+    margin-bottom: 10px;
+  }
+  .streak { color: var(--ba-blue); }
+  .progress-track { height: 6px; background: #e4eef7; border-radius: 3px; margin-bottom: 18px; overflow: hidden; }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--ba-blue), var(--ba-sky));
+    border-radius: 3px;
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+  .halo-frame {
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, #dff1ff 0%, #f4faff 65%, #fff 100%);
+    border: 3px solid #d5e9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 10px rgba(18, 138, 250, 0.08);
+  }
+  .halo-frame img {
+    width: 178px;
+    height: 178px;
+    object-fit: contain;
+    filter: drop-shadow(0 3px 6px rgba(18, 138, 250, 0.25));
+  }
+  .question-text { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 470px) { .choices { grid-template-columns: 1fr; } }
+  .choice-btn {
+    border: 2px solid #d5e5f2;
+    background: #fbfdff;
+    border-radius: 14px;
+    padding: 10px 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ba-navy);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: left;
+  }
+  .choice-btn:hover:not(:disabled) { border-color: var(--ba-blue); background: #f0f8ff; }
+  .choice-btn:disabled { cursor: default; }
+  .choice-btn .key-hint { font-size: 0.7rem; color: #b0c2d2; font-weight: 700; flex: 0 0 auto; }
+  /* 顔アイコン：ズーム＋上部カットでヘイローを隠す */
+  .face {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex: 0 0 auto;
+    background: #e8f2fb;
+    border: 2px solid #d5e9fa;
+    position: relative;
+  }
+  .face img {
+    position: absolute;
+    width: 170%;
+    left: -35%;
+    top: -50%;
+  }
+  .face.unknown::after {
+    content: "?";
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #9fb8cd;
+  }
+  .choice-btn .cname { flex: 1; }
+  .choice-btn.correct { background: var(--correct); border-color: var(--correct); color: #fff; animation: pop 0.35s; }
+  .choice-btn.wrong { background: var(--wrong); border-color: var(--wrong); color: #fff; animation: shake 0.4s; }
+  .choice-btn.dim { opacity: 0.4; }
+  @keyframes pop { 50% { transform: scale(1.05); } }
+  @keyframes shake {
+    20% { transform: translateX(-6px); } 40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
+  }
+
+  /* ---------- reveal panel (回答後) ---------- */
+  .reveal { animation: fadeup 0.35s ease; }
+  @keyframes fadeup { from { opacity: 0; transform: translateY(14px); } }
+  .reveal-judge { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; }
+  .reveal-judge.ok { color: var(--correct); }
+  .reveal-judge.ng { color: var(--wrong); }
+  .reveal-body {
+    display: flex;
+    gap: 26px;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 18px;
+  }
+  .reveal-body .portrait {
+    height: min(58vh, 540px);
+    max-width: 48%;
+    object-fit: contain;
+    filter: drop-shadow(0 6px 14px rgba(45, 55, 70, 0.25));
+    animation: portrait-in 0.45s cubic-bezier(0.2, 0.8, 0.3, 1.15);
+  }
+  @keyframes portrait-in { from { opacity: 0; transform: translateY(24px) scale(0.92); } }
+  .reveal-info { text-align: center; min-width: 0; }
+  .reveal-info .label { font-size: 0.8rem; color: #7d8a99; font-weight: 700; letter-spacing: 0.1em; }
+  .reveal-info .fullname { font-size: 1.9rem; font-weight: 800; margin: 4px 0 12px; }
+  .reveal-info .halo-mini { width: 110px; height: 110px; object-fit: contain; }
+  .reveal-info .picked-note { font-size: 0.9rem; color: var(--wrong); font-weight: 600; margin-top: 10px; }
+  .profile-table {
+    margin: 14px auto 0;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    text-align: left;
+  }
+  .profile-table th {
+    background: #eaf4fd;
+    color: var(--ba-blue-dark);
+    font-weight: 700;
+    padding: 7px 14px;
+    border: 1px solid #d5e9fa;
+    border-radius: 6px;
+    white-space: nowrap;
+    font-size: 0.8rem;
+  }
+  .profile-table td {
+    padding: 7px 14px;
+    border: 1px solid #e0ecf6;
+    font-weight: 600;
+    max-width: 240px;
+  }
+
+  /* ---------- 正解/不正解スタンプ ---------- */
+  .stamp {
+    position: absolute;
+    top: 46%;
+    left: 50%;
+    z-index: 20;
+    font-size: 7rem;
+    font-weight: 900;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .stamp.show-ok {
+    color: rgba(46, 184, 114, 0.85);
+    text-shadow: 0 0 30px rgba(46, 184, 114, 0.5);
+    animation: stamp-in 0.9s ease forwards;
+  }
+  .stamp.show-ng {
+    color: rgba(232, 83, 79, 0.85);
+    text-shadow: 0 0 30px rgba(232, 83, 79, 0.5);
+    animation: stamp-in 0.9s ease forwards;
+  }
+  @keyframes stamp-in {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(2.6) rotate(-18deg); }
+    35% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
+    75% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
+  }
+  /* 不正解フラッシュ */
+  .flash-ng { animation: flash-red 0.5s ease; }
+  @keyframes flash-red {
+    0% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
+    30% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0.16); }
+    100% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
+  }
+  /* 紙吹雪 */
+  .confetti {
+    position: absolute;
+    top: -12px;
+    width: 10px;
+    height: 14px;
+    z-index: 15;
+    pointer-events: none;
+    animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+  }
+
+  .next-btn {
+    background: linear-gradient(135deg, var(--ba-blue), var(--ba-blue-dark));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 48px;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    box-shadow: 0 5px 14px rgba(18, 138, 250, 0.4);
+    transition: transform 0.12s;
+  }
+  .next-btn:hover { transform: translateY(-2px); }
+  .key-tip { font-size: 0.7rem; color: #a8b8c8; margin-top: 8px; }
+
+  /* ---------- result screen ---------- */
+  .score-big { font-size: 3rem; font-weight: 800; color: var(--ba-blue); margin: 8px 0 2px; }
+  .score-sub { color: #7d8a99; font-size: 0.9rem; margin-bottom: 6px; }
+  .rank-badge {
+    display: inline-block;
+    background: var(--ba-yellow);
+    color: #7a5c00;
+    font-weight: 800;
+    border-radius: 999px;
+    padding: 6px 22px;
+    margin-bottom: 20px;
+    font-size: 1.05rem;
+  }
+  .miss-title { font-size: 0.9rem; font-weight: 700; margin: 6px 0 10px; }
+  .miss-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    max-height: 230px;
+    overflow-y: auto;
+    margin-bottom: 22px;
+    padding: 4px;
+  }
+  .miss-item {
+    width: 96px;
+    background: #f6fafd;
+    border: 1px solid #e0ecf6;
+    border-radius: 10px;
+    padding: 8px 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .miss-item img { width: 52px; height: 52px; object-fit: contain; }
+  .miss-item .ans { color: var(--correct); display: block; }
+  .miss-item .yours { color: var(--wrong); display: block; text-decoration: line-through; }
+  .hidden { display: none !important; }
+
+  /* ---------- スマホ対応 ---------- */
+  @media (max-width: 640px) {
+    body { align-items: flex-start; padding: 8px 0; }
+    .card { padding: 22px 14px; border-radius: 16px; }
+    h1 { font-size: 1.35rem; }
+    .halo-frame { width: 160px; height: 160px; }
+    .halo-frame img { width: 128px; height: 128px; }
+    .choices { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .choice-btn { padding: 8px 8px; font-size: 0.88rem; gap: 7px; }
+    .choice-btn .key-hint { display: none; }
+    .face { width: 46px; height: 46px; }
+    .key-tip { display: none; }
+    .reveal-body { flex-direction: column; gap: 12px; }
+    .reveal-body .portrait { height: 38vh; max-width: 90%; }
+    .reveal-info .fullname { font-size: 1.5rem; }
+    .reveal-info .halo-mini { width: 80px; height: 80px; }
+    .reveal-judge { font-size: 1.25rem; margin-bottom: 8px; }
+    .profile-table { font-size: 0.85rem; }
+    .stamp { font-size: 5rem; }
+    .score-big { font-size: 2.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="card">
+  <div class="stamp" id="stamp"></div>
+
+  <!-- スタート画面 -->
+  <div id="screen-start">
+    <h1><span class="halo">HALO</span> クイズ</h1>
+    <p class="subtitle">ヘイローを見て、どのキャラクターのものか当てよう！（全195種）</p>
+    <p class="mode-label">出題数を選んでください</p>
+    <div class="mode-row" id="mode-row">
+      <button class="mode-btn selected" data-count="10">10問</button>
+      <button class="mode-btn" data-count="25">25問</button>
+      <button class="mode-btn" data-count="50">50問</button>
+      <button class="mode-btn" data-count="all">全問</button>
+    </div>
+    <button class="primary-btn" id="btn-start">スタート</button>
+  </div>
+
+  <!-- クイズ画面 -->
+  <div id="screen-quiz" class="hidden">
+    <div class="status-row">
+      <span id="q-counter"></span>
+      <span class="streak" id="q-streak"></span>
+      <span id="q-score"></span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="q-progress"></div></div>
+
+    <!-- 出題ビュー -->
+    <div id="q-view">
+      <div class="halo-frame"><img id="q-image" src="" alt="ヘイロー"></div>
+      <p class="question-text">このヘイローは誰のもの？</p>
+      <div class="choices" id="q-choices"></div>
+      <p class="key-tip">キーボード 1〜4 でも回答できます</p>
+    </div>
+
+    <!-- 正解発表ビュー -->
+    <div id="r-view" class="hidden">
+      <div class="reveal">
+        <div class="reveal-judge" id="rv-judge"></div>
+        <div class="reveal-body">
+          <img class="portrait" id="rv-portrait" src="" alt="">
+          <div class="reveal-info">
+            <div class="label">正解</div>
+            <div class="fullname" id="rv-fullname"></div>
+            <img class="halo-mini" id="rv-halo" src="" alt="">
+            <table class="profile-table">
+              <tr><th>学園</th><td id="rv-school"></td></tr>
+              <tr><th>部活</th><td id="rv-club"></td></tr>
+              <tr><th>誕生日</th><td id="rv-birthday"></td></tr>
+            </table>
+            <div class="picked-note" id="rv-picked"></div>
+          </div>
+        </div>
+        <button class="next-btn" id="btn-next">次へ</button>
+        <p class="key-tip">Enter / Space でも進めます</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div id="screen-result" class="hidden">
+    <h1>結果発表</h1>
+    <div class="score-big" id="r-score"></div>
+    <div class="score-sub" id="r-detail"></div>
+    <div class="rank-badge" id="r-rank"></div>
+    <div id="r-miss-block">
+      <p class="miss-title">間違えたヘイロー</p>
+      <div class="miss-list" id="r-miss"></div>
+    </div>
+    <button class="primary-btn" id="btn-retry">もう一度</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(() => {
+  const $ = (id) => document.getElementById(id);
+  const screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
+  const show = (name) => Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
+
+  let questionCount = 10;
+  let queue = [];
+  let qIndex = 0;
+  let score = 0;
+  let streak = 0;
+  let misses = [];
+  let locked = false;
+  let revealing = false;
+
+  const shuffle = (arr) => {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  };
+
+  const faceHtml = (c) =>
+    c.face
+      ? `<span class="face"><img src="images/face/${c.id}.png" alt=""></span>`
+      : `<span class="face unknown"></span>`;
+
+  $("mode-row").addEventListener("click", (e) => {
+    const btn = e.target.closest(".mode-btn");
+    if (!btn) return;
+    document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    questionCount = btn.dataset.count === "all" ? CHARACTERS.length : Number(btn.dataset.count);
+  });
+
+  $("btn-start").addEventListener("click", startGame);
+  $("btn-retry").addEventListener("click", () => show("start"));
+  $("btn-next").addEventListener("click", nextQuestion);
+
+  function startGame() {
+    queue = shuffle(CHARACTERS).slice(0, questionCount);
+    qIndex = 0;
+    score = 0;
+    streak = 0;
+    misses = [];
+    show("quiz");
+    renderQuestion();
+  }
+
+  function updateStatus() {
+    $("q-counter").textContent = `Q${qIndex + 1} / ${queue.length}`;
+    $("q-score").textContent = `スコア ${score}`;
+    $("q-streak").textContent = streak >= 2 ? `🔥 ${streak}連続` : "";
+    $("q-progress").style.width = `${(qIndex / queue.length) * 100}%`;
+  }
+
+  function renderQuestion() {
+    locked = false;
+    revealing = false;
+    $("r-view").classList.add("hidden");
+    $("q-view").classList.remove("hidden");
+    updateStatus();
+
+    const char = queue[qIndex];
+    $("q-image").src = `images/${char.id}.png`;
+
+    const distractors = shuffle(CHARACTERS.filter((c) => c.id !== char.id)).slice(0, 3);
+    const options = shuffle([char, ...distractors]);
+
+    const box = $("q-choices");
+    box.innerHTML = "";
+    options.forEach((opt, i) => {
+      const btn = document.createElement("button");
+      btn.className = "choice-btn";
+      btn.innerHTML = `<span class="key-hint">${i + 1}</span>${faceHtml(opt)}<span class="cname">${opt.name}</span>`;
+      btn.addEventListener("click", () => answer(opt, btn));
+      box.appendChild(btn);
+    });
+  }
+
+  function answer(picked, btn) {
+    if (locked) return;
+    locked = true;
+    const char = queue[qIndex];
+    const buttons = [...document.querySelectorAll(".choice-btn")];
+    buttons.forEach((b) => (b.disabled = true));
+
+    const correct = picked.id === char.id;
+    if (correct) {
+      score++;
+      streak++;
+      btn.classList.add("correct");
+      stampEffect("〇", true);
+      confettiBurst();
+    } else {
+      streak = 0;
+      btn.classList.add("wrong");
+      misses.push({ char, picked });
+      stampEffect("✕", false);
+      $("card").classList.remove("flash-ng");
+      void $("card").offsetWidth;
+      $("card").classList.add("flash-ng");
+    }
+    buttons.forEach((b) => {
+      if (b.querySelector(".cname").textContent === char.name) b.classList.add("correct");
+      else if (!b.classList.contains("wrong")) b.classList.add("dim");
+    });
+    updateStatus();
+
+    setTimeout(() => showReveal(char, picked, correct), 850);
+  }
+
+  function showReveal(char, picked, correct) {
+    revealing = true;
+    $("q-view").classList.add("hidden");
+    $("r-view").classList.remove("hidden");
+
+    const judge = $("rv-judge");
+    judge.textContent = correct ? "正解！" : "不正解…";
+    judge.className = "reveal-judge " + (correct ? "ok" : "ng");
+
+    // 全身画像（ない場合はヘイロー画像で代用）
+    const portrait = $("rv-portrait");
+    portrait.src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
+
+    $("rv-fullname").textContent = char.fullName;
+    $("rv-halo").src = `images/${char.id}.png`;
+    const dash = (v) => (v && v !== "-" ? v : "—");
+    $("rv-school").textContent = dash(char.school);
+    $("rv-club").textContent = dash(char.club);
+    $("rv-birthday").textContent = dash(char.birthday);
+    $("rv-picked").textContent = correct ? "" : `あなたの回答：${picked.name}`;
+  }
+
+  function nextQuestion() {
+    if (!revealing) return;
+    qIndex++;
+    if (qIndex < queue.length) renderQuestion();
+    else showResult();
+  }
+
+  /* ---------- effects ---------- */
+  function stampEffect(text, ok) {
+    const stamp = $("stamp");
+    stamp.textContent = text;
+    stamp.className = "stamp";
+    void stamp.offsetWidth;
+    stamp.classList.add(ok ? "show-ok" : "show-ng");
+  }
+
+  function confettiBurst() {
+    const card = $("card");
+    const colors = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff"];
+    for (let i = 0; i < 36; i++) {
+      const p = document.createElement("div");
+      p.className = "confetti";
+      p.style.left = Math.random() * 100 + "%";
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
+      p.style.animationDuration = 0.9 + Math.random() * 0.9 + "s";
+      p.style.animationDelay = Math.random() * 0.25 + "s";
+      p.style.transform = `rotate(${Math.random() * 360}deg)`;
+      if (Math.random() < 0.4) p.style.borderRadius = "50%";
+      card.appendChild(p);
+      setTimeout(() => p.remove(), 2200);
+    }
+  }
+
+  function showResult() {
+    show("result");
+    const total = queue.length;
+    const rate = Math.round((score / total) * 100);
+    $("r-score").textContent = `${score} / ${total}`;
+    $("r-detail").textContent = `正解率 ${rate}%`;
+    const rank =
+      rate === 100 ? "SS — 完璧な先生！" :
+      rate >= 90 ? "S — さすが先生！" :
+      rate >= 70 ? "A — かなりの生徒通" :
+      rate >= 50 ? "B — まずまず！" :
+      rate >= 30 ? "C — まだまだこれから" :
+      "D — シャーレで復習しましょう";
+    $("r-rank").textContent = rank;
+
+    if (rate === 100) confettiBurst();
+
+    const missBlock = $("r-miss-block");
+    const missBox = $("r-miss");
+    missBox.innerHTML = "";
+    missBlock.classList.toggle("hidden", misses.length === 0);
+    misses.forEach(({ char, picked }) => {
+      const div = document.createElement("div");
+      div.className = "miss-item";
+      div.innerHTML = `<img src="images/${char.id}.png" alt=""><span class="ans">${char.fullName}</span><span class="yours">${picked.name}</span>`;
+      missBox.appendChild(div);
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (screens.quiz.classList.contains("hidden")) return;
+    if (revealing) {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        nextQuestion();
+      }
+      return;
+    }
+    const n = Number(e.key);
+    if (n >= 1 && n <= 4) {
+      const btn = document.querySelectorAll(".choice-btn")[n - 1];
+      if (btn && !btn.disabled) btn.click();
+    }
+  });
+})();
+</script>
+</body>
+</html>
