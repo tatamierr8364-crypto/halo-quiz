@@ -14,6 +14,10 @@
     --ba-yellow: #fdd35c;
     --correct: #2eb872;
     --wrong: #e8534f;
+    --halo-bg1: #8b9db4;
+    --halo-bg2: #66788e;
+    --halo-bg3: #55677d;
+    --halo-border: #7e91a8;
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -45,8 +49,7 @@
     z-index: 5;
   }
   h1 { font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 4px; }
-  h1 .halo { color: var(--ba-blue); }
-  .subtitle { color: #7d8a99; font-size: 0.85rem; margin-bottom: 28px; }
+  .subtitle { color: #7d8a99; font-size: 0.85rem; margin-bottom: 22px; }
 
   /* ---------- start screen ---------- */
   .start-hero {
@@ -85,8 +88,31 @@
     border-radius: 999px;
     box-shadow: 0 4px 14px rgba(18, 138, 250, 0.45);
   }
-  .mode-label { font-size: 0.9rem; font-weight: 600; margin-bottom: 12px; }
-  .mode-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 26px; flex-wrap: wrap; }
+  .section-label { font-size: 0.9rem; font-weight: 700; margin: 18px 0 10px; }
+  .mode-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .mode-card {
+    border: 2px solid #d5e5f2;
+    background: #fbfdff;
+    border-radius: 14px;
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .mode-card:hover { border-color: var(--ba-sky); }
+  .mode-card.selected {
+    border-color: var(--ba-blue);
+    background: #eaf5ff;
+    box-shadow: 0 4px 14px rgba(18, 138, 250, 0.22);
+  }
+  .mode-card .m-emoji { font-size: 1.7rem; }
+  .mode-card .m-name { font-weight: 800; font-size: 0.98rem; margin: 4px 0 2px; }
+  .mode-card .m-desc { font-size: 0.72rem; color: #7d8a99; line-height: 1.5; }
+  .mode-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .mode-btn {
     border: 2px solid #d5e5f2;
     background: #fff;
@@ -105,7 +131,38 @@
     color: #fff;
     box-shadow: 0 4px 12px rgba(18, 138, 250, 0.35);
   }
+  .fx-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px auto 24px;
+    cursor: pointer;
+    user-select: none;
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+  .fx-toggle .track {
+    width: 52px;
+    height: 28px;
+    background: #d5e5f2;
+    border-radius: 999px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .fx-toggle .knob {
+    position: absolute;
+    top: 3px; left: 3px;
+    width: 22px; height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    transition: left 0.2s;
+  }
+  .fx-toggle.on .track { background: linear-gradient(90deg, #ff8fb1, var(--ba-yellow), var(--ba-sky)); }
+  .fx-toggle.on .knob { left: 27px; }
   .primary-btn {
+    display: block;
+    margin: 0 auto;
     background: linear-gradient(135deg, var(--ba-blue), var(--ba-blue-dark));
     color: #fff;
     border: none;
@@ -126,11 +183,25 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 10px;
     font-size: 0.85rem;
     font-weight: 600;
     color: #7d8a99;
     margin-bottom: 10px;
   }
+  .home-btn {
+    border: 1.5px solid #d5e5f2;
+    background: #fff;
+    color: #7d8a99;
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    flex: 0 0 auto;
+  }
+  .home-btn:hover { border-color: var(--wrong); color: var(--wrong); }
   .streak { color: var(--ba-blue); }
   .progress-track { height: 6px; background: #e4eef7; border-radius: 3px; margin-bottom: 18px; overflow: hidden; }
   .progress-fill {
@@ -145,22 +216,29 @@
     height: 220px;
     margin: 0 auto 10px;
     border-radius: 50%;
-    background: radial-gradient(circle at 50% 42%, #333e4e 0%, #1d2530 65%, #141a23 100%);
-    border: 3px solid #3c4a5c;
+    background: radial-gradient(circle at 50% 42%, var(--halo-bg1) 0%, var(--halo-bg2) 62%, var(--halo-bg3) 100%);
+    border: 3px solid var(--halo-border);
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.45), 0 4px 14px rgba(18, 138, 250, 0.18);
+    box-shadow: inset 0 2px 12px rgba(20, 30, 45, 0.28), 0 4px 14px rgba(18, 138, 250, 0.15);
   }
   .halo-frame img {
     width: 178px;
     height: 178px;
     object-fit: contain;
-    filter: drop-shadow(0 0 10px rgba(99, 200, 246, 0.3));
+    filter: drop-shadow(0 2px 8px rgba(20, 30, 45, 0.35));
   }
-  .question-text { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
+  .portrait-q {
+    height: 300px;
+    max-width: 90%;
+    object-fit: contain;
+    margin: 0 auto 8px;
+    display: block;
+    filter: drop-shadow(0 6px 14px rgba(45, 55, 70, 0.25));
+  }
+  .question-text { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; }
   .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 470px) { .choices { grid-template-columns: 1fr; } }
   .choice-btn {
     border: 2px solid #d5e5f2;
     background: #fbfdff;
@@ -176,10 +254,10 @@
     gap: 10px;
     text-align: left;
   }
+  .choice-btn.text-only { justify-content: center; text-align: center; padding: 12px 8px; }
   .choice-btn:hover:not(:disabled) { border-color: var(--ba-blue); background: #f0f8ff; }
   .choice-btn:disabled { cursor: default; }
   .choice-btn .key-hint { font-size: 0.7rem; color: #b0c2d2; font-weight: 700; flex: 0 0 auto; }
-  /* 顔アイコン：ズーム＋上部カットでヘイローを隠す */
   .face {
     width: 64px;
     height: 64px;
@@ -208,6 +286,7 @@
     color: #9fb8cd;
   }
   .choice-btn .cname { flex: 1; }
+  .choice-btn.text-only .cname { flex: 0 1 auto; }
   .choice-btn.correct { background: var(--correct); border-color: var(--correct); color: #fff; animation: pop 0.35s; }
   .choice-btn.wrong { background: var(--wrong); border-color: var(--wrong); color: #fff; animation: shake 0.4s; }
   .choice-btn.dim { opacity: 0.4; }
@@ -217,7 +296,7 @@
     60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
   }
 
-  /* ---------- reveal panel (回答後) ---------- */
+  /* ---------- reveal panel ---------- */
   .reveal { animation: fadeup 0.35s ease; }
   @keyframes fadeup { from { opacity: 0; transform: translateY(14px); } }
   .reveal-judge { font-size: 1.5rem; font-weight: 800; margin-bottom: 12px; }
@@ -247,8 +326,8 @@
     object-fit: contain;
     padding: 14px;
     border-radius: 50%;
-    background: radial-gradient(circle at 50% 42%, #333e4e 0%, #1d2530 65%, #141a23 100%);
-    border: 2px solid #3c4a5c;
+    background: radial-gradient(circle at 50% 42%, var(--halo-bg1) 0%, var(--halo-bg2) 62%, var(--halo-bg3) 100%);
+    border: 2px solid var(--halo-border);
   }
   .reveal-info .picked-note { font-size: 0.9rem; color: var(--wrong); font-weight: 600; margin-top: 10px; }
   .profile-table {
@@ -263,7 +342,6 @@
     font-weight: 700;
     padding: 7px 14px;
     border: 1px solid #d5e9fa;
-    border-radius: 6px;
     white-space: nowrap;
     font-size: 0.8rem;
   }
@@ -274,7 +352,7 @@
     max-width: 240px;
   }
 
-  /* ---------- 正解/不正解スタンプ ---------- */
+  /* ---------- effects ---------- */
   .stamp {
     position: absolute;
     top: 46%;
@@ -295,20 +373,35 @@
     text-shadow: 0 0 30px rgba(232, 83, 79, 0.5);
     animation: stamp-in 0.9s ease forwards;
   }
+  .stamp.mega { font-size: 10rem; }
   @keyframes stamp-in {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(2.6) rotate(-18deg); }
     35% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
     75% { opacity: 1; }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
   }
-  /* 不正解フラッシュ */
   .flash-ng { animation: flash-red 0.5s ease; }
   @keyframes flash-red {
     0% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
     30% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0.16); }
     100% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
   }
-  /* 紙吹雪 */
+  .flash-rainbow { animation: flash-rb 0.8s ease; }
+  @keyframes flash-rb {
+    0% { box-shadow: inset 0 0 0 999px rgba(255, 143, 177, 0); }
+    25% { box-shadow: inset 0 0 0 999px rgba(255, 143, 177, 0.14); }
+    50% { box-shadow: inset 0 0 0 999px rgba(253, 211, 92, 0.14); }
+    75% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0.14); }
+    100% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0); }
+  }
+  .quake { animation: quake 0.5s ease; }
+  @keyframes quake {
+    10% { transform: translate(-8px, 4px) rotate(-0.7deg); }
+    30% { transform: translate(7px, -5px) rotate(0.6deg); }
+    50% { transform: translate(-6px, -3px) rotate(-0.4deg); }
+    70% { transform: translate(5px, 4px) rotate(0.3deg); }
+    90% { transform: translate(-3px, -2px); }
+  }
   .confetti {
     position: absolute;
     top: -12px;
@@ -320,6 +413,19 @@
   }
   @keyframes confetti-fall {
     to { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+  }
+  .spark {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    z-index: 16;
+    pointer-events: none;
+    animation: spark-fly 0.85s ease-out forwards;
+  }
+  @keyframes spark-fly {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
   }
 
   .next-btn {
@@ -375,7 +481,7 @@
     width: 52px;
     height: 52px;
     object-fit: contain;
-    background: radial-gradient(circle at 50% 45%, #333e4e 0%, #1a212b 80%);
+    background: radial-gradient(circle at 50% 45%, var(--halo-bg1) 0%, var(--halo-bg3) 85%);
     border-radius: 50%;
     padding: 5px;
   }
@@ -390,8 +496,12 @@
     h1 { font-size: 1.35rem; }
     .start-hero { margin: -22px -14px 16px; height: 300px; padding-top: 20px; }
     .hero-title { font-size: 1.1rem; padding: 5px 20px; }
+    .mode-cards { grid-template-columns: 1fr; gap: 8px; }
+    .mode-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 14px; }
+    .mode-card .m-emoji { font-size: 1.5rem; }
     .halo-frame { width: 160px; height: 160px; }
     .halo-frame img { width: 128px; height: 128px; }
+    .portrait-q { height: 200px; }
     .choices { grid-template-columns: 1fr 1fr; gap: 8px; }
     .choice-btn { padding: 8px 8px; font-size: 0.88rem; gap: 7px; }
     .choice-btn .key-hint { display: none; }
@@ -400,10 +510,11 @@
     .reveal-body { flex-direction: column; gap: 12px; }
     .reveal-body .portrait { height: 38vh; max-width: 90%; }
     .reveal-info .fullname { font-size: 1.5rem; }
-    .reveal-info .halo-mini { width: 80px; height: 80px; }
+    .reveal-info .halo-mini { width: 100px; height: 100px; padding: 10px; }
     .reveal-judge { font-size: 1.25rem; margin-bottom: 8px; }
     .profile-table { font-size: 0.85rem; }
     .stamp { font-size: 5rem; }
+    .stamp.mega { font-size: 6.5rem; }
     .score-big { font-size: 2.3rem; }
   }
 </style>
@@ -420,19 +531,43 @@
       <div class="hero-title">HALO クイズ</div>
     </div>
     <p class="subtitle">ヘイローを見て、どのキャラクターのものか当てよう！（全195種）</p>
-    <p class="mode-label">出題数を選んでください</p>
+
+    <p class="section-label">モードを選んでください</p>
+    <div class="mode-cards" id="mode-cards">
+      <div class="mode-card selected" data-mode="normal">
+        <span class="m-emoji">😇</span>
+        <div><div class="m-name">ヘイロークイズ</div><div class="m-desc">定番の4択。顔アイコン付き</div></div>
+      </div>
+      <div class="mode-card" data-mode="hard">
+        <span class="m-emoji">🔥</span>
+        <div><div class="m-name">ハードモード</div><div class="m-desc">8択・名前のみ・同じ学園の生徒が混ざる</div></div>
+      </div>
+      <div class="mode-card" data-mode="surname">
+        <span class="m-emoji">📛</span>
+        <div><div class="m-name">苗字当てクイズ</div><div class="m-desc">立ち絵と名前から正しい苗字を当てる</div></div>
+      </div>
+    </div>
+
+    <p class="section-label">出題数</p>
     <div class="mode-row" id="mode-row">
       <button class="mode-btn selected" data-count="10">10問</button>
       <button class="mode-btn" data-count="25">25問</button>
       <button class="mode-btn" data-count="50">50問</button>
       <button class="mode-btn" data-count="all">全問</button>
     </div>
+
+    <div class="fx-toggle" id="fx-toggle">
+      <span class="track"><span class="knob"></span></span>
+      <span>🎆 ド派手エフェクト</span>
+    </div>
+
     <button class="primary-btn" id="btn-start">スタート</button>
   </div>
 
   <!-- クイズ画面 -->
   <div id="screen-quiz" class="hidden">
     <div class="status-row">
+      <button class="home-btn" id="btn-home">⌂ トップへ</button>
       <span id="q-counter"></span>
       <span class="streak" id="q-streak"></span>
       <span id="q-score"></span>
@@ -441,10 +576,11 @@
 
     <!-- 出題ビュー -->
     <div id="q-view">
-      <div class="halo-frame"><img id="q-image" src="" alt="ヘイロー"></div>
-      <p class="question-text">このヘイローは誰のもの？</p>
+      <div class="halo-frame" id="q-halo-frame"><img id="q-image" src="" alt="ヘイロー"></div>
+      <img class="portrait-q hidden" id="q-portrait" src="" alt="立ち絵">
+      <p class="question-text" id="q-text">このヘイローは誰のもの？</p>
       <div class="choices" id="q-choices"></div>
-      <p class="key-tip">キーボード 1〜4 でも回答できます</p>
+      <p class="key-tip" id="q-keytip">キーボードの数字キーでも回答できます</p>
     </div>
 
     <!-- 正解発表ビュー -->
@@ -478,7 +614,7 @@
     <div class="score-sub" id="r-detail"></div>
     <div class="rank-badge" id="r-rank"></div>
     <div id="r-miss-block">
-      <p class="miss-title">間違えたヘイロー</p>
+      <p class="miss-title">間違えた問題</p>
       <div class="miss-list" id="r-miss"></div>
     </div>
     <button class="primary-btn" id="btn-retry">もう一度</button>
@@ -492,6 +628,15 @@
   const screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
   const show = (name) => Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
 
+  // 苗字当て用：フルネーム＝苗字＋名前 の形のキャラのみ
+  const SURNAME_POOL = CHARACTERS.filter(
+    (c) => c.fullName !== c.name && c.fullName.endsWith(c.name)
+  ).map((c) => ({ ...c, surname: c.fullName.slice(0, c.fullName.length - c.name.length) }));
+
+  const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "");
+
+  let mode = "normal";      // normal | hard | surname
+  let hade = false;         // ド派手エフェクト
   let questionCount = 10;
   let queue = [];
   let qIndex = 0;
@@ -515,20 +660,43 @@
       ? `<span class="face"><img src="images/face/${c.id}.png" alt=""></span>`
       : `<span class="face unknown"></span>`;
 
+  /* ---------- start screen events ---------- */
+  $("mode-cards").addEventListener("click", (e) => {
+    const cardEl = e.target.closest(".mode-card");
+    if (!cardEl) return;
+    document.querySelectorAll(".mode-card").forEach((c) => c.classList.remove("selected"));
+    cardEl.classList.add("selected");
+    mode = cardEl.dataset.mode;
+  });
+
   $("mode-row").addEventListener("click", (e) => {
     const btn = e.target.closest(".mode-btn");
     if (!btn) return;
     document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("selected"));
     btn.classList.add("selected");
-    questionCount = btn.dataset.count === "all" ? CHARACTERS.length : Number(btn.dataset.count);
+    questionCount = btn.dataset.count;
+  });
+
+  $("fx-toggle").addEventListener("click", () => {
+    hade = !hade;
+    $("fx-toggle").classList.toggle("on", hade);
   });
 
   $("btn-start").addEventListener("click", startGame);
   $("btn-retry").addEventListener("click", () => show("start"));
   $("btn-next").addEventListener("click", nextQuestion);
+  $("btn-home").addEventListener("click", () => {
+    if (confirm("クイズを中断してトップに戻りますか？")) show("start");
+  });
+
+  function pool() {
+    return mode === "surname" ? SURNAME_POOL : CHARACTERS;
+  }
 
   function startGame() {
-    queue = shuffle(CHARACTERS).slice(0, questionCount);
+    const p = pool();
+    const n = questionCount === "all" ? p.length : Math.min(Number(questionCount), p.length);
+    queue = shuffle(p).slice(0, n);
     qIndex = 0;
     score = 0;
     streak = 0;
@@ -544,6 +712,35 @@
     $("q-progress").style.width = `${(qIndex / queue.length) * 100}%`;
   }
 
+  /* ---------- 出題 ---------- */
+  function buildOptions(char) {
+    if (mode === "surname") {
+      // 苗字の選択肢：正解＋他キャラの苗字3つ（重複なし）
+      const others = shuffle([...new Set(SURNAME_POOL.map((c) => c.surname))].filter((s) => s !== char.surname)).slice(0, 3);
+      return shuffle([
+        { label: char.surname, correct: true, faceChar: null },
+        ...others.map((s) => ({ label: s, correct: false, faceChar: null })),
+      ]);
+    }
+    if (mode === "hard") {
+      // 同じ学園の生徒を優先して8択
+      const key = schoolKey(char);
+      const same = shuffle(CHARACTERS.filter((c) => c.id !== char.id && key && schoolKey(c) === key));
+      const rest = shuffle(CHARACTERS.filter((c) => c.id !== char.id && !same.includes(c)));
+      const distractors = [...same, ...rest].slice(0, 7);
+      return shuffle([
+        { label: char.name, correct: true, faceChar: null },
+        ...distractors.map((c) => ({ label: c.name, correct: false, faceChar: null })),
+      ]);
+    }
+    // normal
+    const distractors = shuffle(CHARACTERS.filter((c) => c.id !== char.id)).slice(0, 3);
+    return shuffle([
+      { label: char.name, correct: true, faceChar: char },
+      ...distractors.map((c) => ({ label: c.name, correct: false, faceChar: c })),
+    ]);
+  }
+
   function renderQuestion() {
     locked = false;
     revealing = false;
@@ -552,22 +749,36 @@
     updateStatus();
 
     const char = queue[qIndex];
-    $("q-image").src = `images/${char.id}.png`;
 
-    const distractors = shuffle(CHARACTERS.filter((c) => c.id !== char.id)).slice(0, 3);
-    const options = shuffle([char, ...distractors]);
+    if (mode === "surname") {
+      $("q-halo-frame").classList.add("hidden");
+      $("q-portrait").classList.remove("hidden");
+      $("q-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
+      $("q-text").textContent = `「${char.name}」の苗字はどれ？`;
+    } else {
+      $("q-halo-frame").classList.remove("hidden");
+      $("q-portrait").classList.add("hidden");
+      $("q-image").src = `images/${char.id}.png`;
+      $("q-text").textContent = mode === "hard" ? "このヘイローは誰のもの？（8択）" : "このヘイローは誰のもの？";
+    }
 
+    const options = buildOptions(char);
     const box = $("q-choices");
     box.innerHTML = "";
     options.forEach((opt, i) => {
       const btn = document.createElement("button");
-      btn.className = "choice-btn";
-      btn.innerHTML = `<span class="key-hint">${i + 1}</span>${faceHtml(opt)}<span class="cname">${opt.name}</span>`;
+      btn.className = "choice-btn" + (opt.faceChar ? "" : " text-only");
+      btn.dataset.correct = opt.correct ? "1" : "";
+      btn.innerHTML =
+        `<span class="key-hint">${i + 1}</span>` +
+        (opt.faceChar ? faceHtml(opt.faceChar) : "") +
+        `<span class="cname">${opt.label}</span>`;
       btn.addEventListener("click", () => answer(opt, btn));
       box.appendChild(btn);
     });
   }
 
+  /* ---------- 回答 ---------- */
   function answer(picked, btn) {
     if (locked) return;
     locked = true;
@@ -575,24 +786,27 @@
     const buttons = [...document.querySelectorAll(".choice-btn")];
     buttons.forEach((b) => (b.disabled = true));
 
-    const correct = picked.id === char.id;
+    const correct = picked.correct;
     if (correct) {
       score++;
       streak++;
       btn.classList.add("correct");
       stampEffect("〇", true);
-      confettiBurst();
+      confettiBurst(hade ? 130 : 36);
+      if (hade) {
+        fireworks();
+        flashCard("flash-rainbow");
+      }
     } else {
       streak = 0;
       btn.classList.add("wrong");
-      misses.push({ char, picked });
+      misses.push({ char, pickedLabel: picked.label });
       stampEffect("✕", false);
-      $("card").classList.remove("flash-ng");
-      void $("card").offsetWidth;
-      $("card").classList.add("flash-ng");
+      flashCard("flash-ng");
+      if (hade) quakeCard();
     }
     buttons.forEach((b) => {
-      if (b.querySelector(".cname").textContent === char.name) b.classList.add("correct");
+      if (b.dataset.correct) b.classList.add("correct");
       else if (!b.classList.contains("wrong")) b.classList.add("dim");
     });
     updateStatus();
@@ -609,7 +823,6 @@
     judge.textContent = correct ? "正解！" : "不正解…";
     judge.className = "reveal-judge " + (correct ? "ok" : "ng");
 
-    // 全身画像（ない場合はヘイロー画像で代用）
     const portrait = $("rv-portrait");
     portrait.src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
 
@@ -619,7 +832,7 @@
     $("rv-school").textContent = dash(char.school);
     $("rv-club").textContent = dash(char.club);
     $("rv-birthday").textContent = dash(char.birthday);
-    $("rv-picked").textContent = correct ? "" : `あなたの回答：${picked.name}`;
+    $("rv-picked").textContent = correct ? "" : `あなたの回答：${picked.label}`;
   }
 
   function nextQuestion() {
@@ -633,28 +846,69 @@
   function stampEffect(text, ok) {
     const stamp = $("stamp");
     stamp.textContent = text;
-    stamp.className = "stamp";
+    stamp.className = "stamp" + (hade ? " mega" : "");
     void stamp.offsetWidth;
     stamp.classList.add(ok ? "show-ok" : "show-ng");
   }
 
-  function confettiBurst() {
+  function flashCard(cls) {
     const card = $("card");
-    const colors = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff"];
-    for (let i = 0; i < 36; i++) {
+    card.classList.remove(cls);
+    void card.offsetWidth;
+    card.classList.add(cls);
+  }
+
+  function quakeCard() {
+    const card = $("card");
+    card.classList.remove("quake");
+    void card.offsetWidth;
+    card.classList.add("quake");
+  }
+
+  const FX_COLORS = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff", "#ff9d5c"];
+
+  function confettiBurst(count) {
+    const card = $("card");
+    for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
       p.className = "confetti";
       p.style.left = Math.random() * 100 + "%";
-      p.style.background = colors[Math.floor(Math.random() * colors.length)];
-      p.style.animationDuration = 0.9 + Math.random() * 0.9 + "s";
-      p.style.animationDelay = Math.random() * 0.25 + "s";
+      p.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+      p.style.animationDuration = 0.9 + Math.random() * 1.1 + "s";
+      p.style.animationDelay = Math.random() * 0.3 + "s";
       p.style.transform = `rotate(${Math.random() * 360}deg)`;
       if (Math.random() < 0.4) p.style.borderRadius = "50%";
       card.appendChild(p);
-      setTimeout(() => p.remove(), 2200);
+      setTimeout(() => p.remove(), 2600);
     }
   }
 
+  function fireworks() {
+    const card = $("card");
+    const rect = card.getBoundingClientRect();
+    for (let b = 0; b < 3; b++) {
+      const cx = 15 + Math.random() * 70; // %
+      const cy = 15 + Math.random() * 45; // %
+      setTimeout(() => {
+        for (let i = 0; i < 26; i++) {
+          const s = document.createElement("div");
+          s.className = "spark";
+          const angle = (Math.PI * 2 * i) / 26 + Math.random() * 0.3;
+          const dist = 60 + Math.random() * 90;
+          s.style.left = cx + "%";
+          s.style.top = cy + "%";
+          s.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+          s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
+          s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
+          s.style.boxShadow = `0 0 8px ${s.style.background}`;
+          card.appendChild(s);
+          setTimeout(() => s.remove(), 950);
+        }
+      }, b * 180);
+    }
+  }
+
+  /* ---------- 結果 ---------- */
   function showResult() {
     show("result");
     const total = queue.length;
@@ -670,20 +924,25 @@
       "D — シャーレで復習しましょう";
     $("r-rank").textContent = rank;
 
-    if (rate === 100) confettiBurst();
+    if (rate === 100) {
+      confettiBurst(hade ? 160 : 50);
+      if (hade) fireworks();
+    }
 
     const missBlock = $("r-miss-block");
     const missBox = $("r-miss");
     missBox.innerHTML = "";
     missBlock.classList.toggle("hidden", misses.length === 0);
-    misses.forEach(({ char, picked }) => {
+    misses.forEach(({ char, pickedLabel }) => {
       const div = document.createElement("div");
       div.className = "miss-item";
-      div.innerHTML = `<img src="images/${char.id}.png" alt=""><span class="ans">${char.fullName}</span><span class="yours">${picked.name}</span>`;
+      const imgSrc = mode === "surname" && char.face ? `images/face/${char.id}.png` : `images/${char.id}.png`;
+      div.innerHTML = `<img src="${imgSrc}" alt=""><span class="ans">${char.fullName}</span><span class="yours">${pickedLabel}</span>`;
       missBox.appendChild(div);
     });
   }
 
+  /* ---------- keyboard ---------- */
   document.addEventListener("keydown", (e) => {
     if (screens.quiz.classList.contains("hidden")) return;
     if (revealing) {
@@ -694,7 +953,7 @@
       return;
     }
     const n = Number(e.key);
-    if (n >= 1 && n <= 4) {
+    if (n >= 1 && n <= 8) {
       const btn = document.querySelectorAll(".choice-btn")[n - 1];
       if (btn && !btn.disabled) btn.click();
     }
