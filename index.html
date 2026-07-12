@@ -729,19 +729,20 @@
     75% { opacity: 1; }
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
   }
-  .flash-ng { animation: flash-red 0.5s ease; }
-  @keyframes flash-red {
-    0% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
-    30% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0.16); }
-    100% { box-shadow: inset 0 0 0 999px rgba(232, 83, 79, 0); }
+  /* カードフラッシュ: opacityのみアニメーション（GPU合成） */
+  .card-flash {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 18;
+    opacity: 0;
+    will-change: opacity;
+    animation: card-flash 0.6s ease forwards;
   }
-  .flash-rainbow { animation: flash-rb 0.8s ease; }
-  @keyframes flash-rb {
-    0% { box-shadow: inset 0 0 0 999px rgba(255, 143, 177, 0); }
-    25% { box-shadow: inset 0 0 0 999px rgba(255, 143, 177, 0.14); }
-    50% { box-shadow: inset 0 0 0 999px rgba(253, 211, 92, 0.14); }
-    75% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0.14); }
-    100% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0); }
+  @keyframes card-flash {
+    0% { opacity: 0; }
+    30% { opacity: 1; }
+    100% { opacity: 0; }
   }
   .pulse-win { animation: pulse-win 0.6s cubic-bezier(0.3, 1.6, 0.4, 1); }
   @keyframes pulse-win {
@@ -811,7 +812,7 @@
   }
   .streak-banner.gold {
     color: #ffd75e;
-    text-shadow: 0 0 26px rgba(255, 180, 20, 0.95), 0 3px 0 #7a4d00, 0 0 60px rgba(255, 120, 0, 0.6);
+    text-shadow: 0 0 26px rgba(255, 160, 20, 0.95), 0 3px 0 #7a4d00;
   }
   .streak-banner.rainbow {
     background: linear-gradient(90deg, #ff5c8a, #ffc93c, #3ddc84, #4aa8ff, #c07bff, #ff5c8a);
@@ -861,8 +862,9 @@
   .cut-in {
     position: absolute;
     top: 40%;
-    left: -220%;
+    left: -60%;
     width: 220%;
+    will-change: transform, opacity;
     padding: 20px 0;
     background: linear-gradient(90deg,
       rgba(140, 0, 15, 0) 0%,
@@ -874,7 +876,7 @@
     border-bottom: 3px solid rgba(255, 235, 170, 0.85);
     font-size: 3.4rem;
     text-align: center;
-    transform: rotate(-6deg);
+    transform: translateX(-130vw) rotate(-6deg);
     animation: cutin 1.15s cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
     pointer-events: none;
     white-space: nowrap;
@@ -890,15 +892,15 @@
     background-clip: text;
     color: transparent;
     filter: drop-shadow(0 3px 0 rgba(70, 5, 0, 0.9))
-            drop-shadow(0 0 6px rgba(120, 10, 0, 0.8))
-            drop-shadow(0 0 22px rgba(255, 200, 70, 0.95));
+            drop-shadow(0 0 18px rgba(255, 200, 70, 0.95));
   }
+  /* transformのみをアニメーション（GPU合成でレイアウト再計算なし） */
   @keyframes cutin {
-    0% { left: -220%; opacity: 0.7; }
-    18% { left: -60%; opacity: 1; }
-    62% { left: -60%; opacity: 1; }
+    0% { transform: translateX(-130vw) rotate(-6deg); opacity: 0.7; }
+    18% { transform: translateX(0) rotate(-6deg); opacity: 1; }
+    62% { transform: translateX(0) rotate(-6deg); opacity: 1; }
     88% { opacity: 1; }
-    100% { left: 160%; opacity: 0; }
+    100% { transform: translateX(130vw) rotate(-6deg); opacity: 0; }
   }
   /* 虹色フィーバーオーバーレイ */
   .fever {
@@ -1486,11 +1488,11 @@
     }
     const s = streak;
     const tier = s >= 10 ? 4 : s >= 7 ? 3 : s >= 5 ? 2 : s >= 3 ? 1 : 0;
-    flashCard("flash-rainbow");
+    flashCard("rainbow");
     pulseCard();
-    confettiBurst(200 + tier * 60);
-    fireworks(5 + tier * 2, 30 + tier * 4);
-    emojiRain(["🎉", "⭐", "✨", "😇", "💙", "🎊"], 16 + tier * 6);
+    confettiBurst(150 + tier * 40);
+    fireworks(4 + tier * 2, 26 + tier * 3);
+    emojiRain(["🎉", "⭐", "✨", "😇", "💙", "🎊"], 14 + tier * 5);
     if (tier >= 1) {
       flashFull("rgba(255, 236, 150, 0.9)");
       streakBanner(s, tier);
@@ -1514,7 +1516,7 @@
   }
 
   function fxWrong() {
-    flashCard("flash-ng");
+    flashCard("ng");
     if (!hade) return;
     quakeCard();
     vignette();
@@ -1529,11 +1531,15 @@
     stamp.classList.add(ok ? "show-ok" : "show-ng");
   }
 
-  function flashCard(cls) {
-    const card = $("card");
-    card.classList.remove(cls);
-    void card.offsetWidth;
-    card.classList.add(cls);
+  function flashCard(kind) {
+    const f = document.createElement("div");
+    f.className = "card-flash";
+    f.style.background =
+      kind === "ng"
+        ? "rgba(232, 83, 79, 0.16)"
+        : "linear-gradient(120deg, rgba(255,143,177,0.15), rgba(253,211,92,0.15), rgba(99,200,246,0.15))";
+    $("card").appendChild(f);
+    setTimeout(() => f.remove(), 650);
   }
 
   function pulseCard() {
@@ -1585,6 +1591,7 @@
     w.style.top = cy + "%";
     layer.appendChild(w);
     setTimeout(() => w.remove(), 800);
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < particles; i++) {
       const s = document.createElement("div");
       s.className = "spark";
@@ -1596,13 +1603,14 @@
       s.style.height = "13px";
       const col = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
       s.style.background = col;
-      s.style.boxShadow = `0 0 16px ${col}, 0 0 30px rgba(255,220,120,0.6)`;
+      s.style.boxShadow = `0 0 18px ${col}`;
       s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
       s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
       s.style.animationDuration = 0.75 + Math.random() * 0.45 + "s";
-      layer.appendChild(s);
+      frag.appendChild(s);
       setTimeout(() => s.remove(), 1300);
     }
+    layer.appendChild(frag);
   }
 
   function cutIn(text) {
@@ -1631,7 +1639,7 @@
   }
 
   function confettiBurst(count) {
-    const layer = fxLayer();
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
       p.className = "confetti";
@@ -1643,9 +1651,10 @@
       const r = Math.random();
       if (r < 0.3) p.style.borderRadius = "50%";
       else if (r < 0.45) { p.style.width = "5px"; p.style.height = "18px"; }
-      layer.appendChild(p);
+      frag.appendChild(p);
       setTimeout(() => p.remove(), 3000);
     }
+    fxLayer().appendChild(frag);
   }
 
   function fireworks(bursts, particles) {
@@ -1654,6 +1663,7 @@
       const cx = 8 + Math.random() * 84;
       const cy = 8 + Math.random() * 60;
       setTimeout(() => {
+        const frag = document.createDocumentFragment();
         for (let i = 0; i < particles; i++) {
           const s = document.createElement("div");
           s.className = "spark";
@@ -1667,15 +1677,16 @@
           s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
           s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
           s.style.animationDuration = 0.7 + Math.random() * 0.5 + "s";
-          layer.appendChild(s);
+          frag.appendChild(s);
           setTimeout(() => s.remove(), 1300);
         }
+        layer.appendChild(frag);
       }, b * 160);
     }
   }
 
   function emojiRain(emojis, count) {
-    const layer = fxLayer();
+    const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const e = document.createElement("div");
       e.className = "fx-emoji";
@@ -1684,9 +1695,10 @@
       e.style.fontSize = 1.4 + Math.random() * 1.6 + "rem";
       e.style.animationDuration = 1.2 + Math.random() * 1.4 + "s";
       e.style.animationDelay = Math.random() * 0.5 + "s";
-      layer.appendChild(e);
+      frag.appendChild(e);
       setTimeout(() => e.remove(), 3300);
     }
+    fxLayer().appendChild(frag);
   }
 
   /* ---------- 結果 ---------- */
