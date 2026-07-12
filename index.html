@@ -51,6 +51,15 @@
   h1 { font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 4px; }
   .subtitle { color: #7d8a99; font-size: 0.85rem; margin-bottom: 22px; }
 
+  /* ---------- effects layer (全画面) ---------- */
+  #fx-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 999;
+    overflow: hidden;
+  }
+
   /* ---------- start screen ---------- */
   .start-hero {
     margin: -34px -32px 20px;
@@ -91,14 +100,14 @@
   .section-label { font-size: 0.9rem; font-weight: 700; margin: 18px 0 10px; }
   .mode-cards {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 10px;
   }
   .mode-card {
     border: 2px solid #d5e5f2;
     background: #fbfdff;
     border-radius: 14px;
-    padding: 14px 10px;
+    padding: 14px 8px;
     cursor: pointer;
     transition: all 0.15s;
     text-align: center;
@@ -110,8 +119,30 @@
     box-shadow: 0 4px 14px rgba(18, 138, 250, 0.22);
   }
   .mode-card .m-emoji { font-size: 1.7rem; }
-  .mode-card .m-name { font-weight: 800; font-size: 0.98rem; margin: 4px 0 2px; }
-  .mode-card .m-desc { font-size: 0.72rem; color: #7d8a99; line-height: 1.5; }
+  .mode-card .m-name { font-weight: 800; font-size: 0.94rem; margin: 4px 0 2px; }
+  .mode-card .m-desc { font-size: 0.7rem; color: #7d8a99; line-height: 1.5; }
+  .sub-options {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .sub-options .seg {
+    border: 2px solid #d5e5f2;
+    background: #fff;
+    border-radius: 999px;
+    padding: 7px 22px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--ba-navy);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sub-options .seg.selected {
+    background: var(--ba-blue);
+    border-color: var(--ba-blue);
+    color: #fff;
+  }
   .mode-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
   .mode-btn {
     border: 2px solid #d5e5f2;
@@ -296,6 +327,39 @@
     60% { transform: translateX(-4px); } 80% { transform: translateX(4px); }
   }
 
+  /* 入力式回答 */
+  .type-answer {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+  .type-answer input {
+    flex: 1;
+    border: 2px solid #d5e5f2;
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ba-navy);
+    outline: none;
+    min-width: 0;
+  }
+  .type-answer input:focus { border-color: var(--ba-blue); }
+  .type-answer button {
+    background: linear-gradient(135deg, var(--ba-blue), var(--ba-blue-dark));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 26px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .type-hint { font-size: 0.75rem; color: #a8b8c8; margin-top: 8px; }
+
   /* ---------- reveal panel ---------- */
   .reveal { animation: fadeup 0.35s ease; }
   @keyframes fadeup { from { opacity: 0; transform: translateY(14px); } }
@@ -319,7 +383,8 @@
   @keyframes portrait-in { from { opacity: 0; transform: translateY(24px) scale(0.92); } }
   .reveal-info { text-align: center; min-width: 0; }
   .reveal-info .label { font-size: 0.8rem; color: #7d8a99; font-weight: 700; letter-spacing: 0.1em; }
-  .reveal-info .fullname { font-size: 1.9rem; font-weight: 800; margin: 4px 0 12px; }
+  .reveal-info .fullname { font-size: 1.9rem; font-weight: 800; margin: 4px 0 2px; }
+  .reveal-info .fn-reading { font-size: 0.85rem; color: #7d8a99; font-weight: 600; margin-bottom: 10px; }
   .reveal-info .halo-mini {
     width: 130px;
     height: 130px;
@@ -352,6 +417,132 @@
     max-width: 240px;
   }
 
+  /* ---------- 学習モード ---------- */
+  .study-tools {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .study-tools input {
+    flex: 1;
+    min-width: 140px;
+    border: 2px solid #d5e5f2;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    outline: none;
+  }
+  .study-tools input:focus { border-color: var(--ba-blue); }
+  .school-chips {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 12px;
+    scrollbar-width: thin;
+  }
+  .chip {
+    border: 1.5px solid #d5e5f2;
+    background: #fff;
+    border-radius: 999px;
+    padding: 5px 14px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--ba-navy);
+    cursor: pointer;
+    white-space: nowrap;
+    flex: 0 0 auto;
+    transition: all 0.15s;
+  }
+  .chip.selected { background: var(--ba-blue); border-color: var(--ba-blue); color: #fff; }
+  .study-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    max-height: 55vh;
+    overflow-y: auto;
+    padding: 4px;
+  }
+  .study-item {
+    background: #f6fafd;
+    border: 1px solid #e0ecf6;
+    border-radius: 12px;
+    padding: 10px 4px 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .study-item:hover { border-color: var(--ba-blue); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(18,138,250,0.18); }
+  .study-item img {
+    width: 74px;
+    height: 74px;
+    object-fit: contain;
+    background: radial-gradient(circle at 50% 45%, var(--halo-bg1) 0%, var(--halo-bg3) 85%);
+    border-radius: 50%;
+    padding: 6px;
+    margin-bottom: 5px;
+  }
+  .study-item .s-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
+  .study-count { font-size: 0.75rem; color: #7d8a99; margin-bottom: 8px; text-align: right; }
+
+  /* 学習モード詳細モーダル */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 30, 45, 0.55);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+  }
+  .modal-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 26px 22px 20px;
+    width: min(680px, 96vw);
+    max-height: 92vh;
+    overflow-y: auto;
+    position: relative;
+    text-align: center;
+    animation: fadeup 0.25s ease;
+  }
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    border: none;
+    background: #eef4fa;
+    color: #7d8a99;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 1rem;
+    font-weight: 800;
+    cursor: pointer;
+  }
+  .modal-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 14px;
+  }
+  .modal-nav button {
+    border: 2px solid #d5e5f2;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 24px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ba-navy);
+    cursor: pointer;
+  }
+  .modal-nav button:hover { border-color: var(--ba-blue); color: var(--ba-blue); }
+
   /* ---------- effects ---------- */
   .stamp {
     position: absolute;
@@ -373,7 +564,7 @@
     text-shadow: 0 0 30px rgba(232, 83, 79, 0.5);
     animation: stamp-in 0.9s ease forwards;
   }
-  .stamp.mega { font-size: 10rem; }
+  .stamp.mega { font-size: 11rem; }
   @keyframes stamp-in {
     0% { opacity: 0; transform: translate(-50%, -50%) scale(2.6) rotate(-18deg); }
     35% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(-12deg); }
@@ -394,38 +585,85 @@
     75% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0.14); }
     100% { box-shadow: inset 0 0 0 999px rgba(99, 200, 246, 0); }
   }
-  .quake { animation: quake 0.5s ease; }
+  .pulse-win { animation: pulse-win 0.6s cubic-bezier(0.3, 1.6, 0.4, 1); }
+  @keyframes pulse-win {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.035) rotate(0.6deg); }
+    65% { transform: scale(0.99) rotate(-0.4deg); }
+    100% { transform: scale(1); }
+  }
+  .quake { animation: quake 0.7s ease; }
   @keyframes quake {
-    10% { transform: translate(-8px, 4px) rotate(-0.7deg); }
-    30% { transform: translate(7px, -5px) rotate(0.6deg); }
-    50% { transform: translate(-6px, -3px) rotate(-0.4deg); }
-    70% { transform: translate(5px, 4px) rotate(0.3deg); }
-    90% { transform: translate(-3px, -2px); }
+    8% { transform: translate(-14px, 8px) rotate(-1.4deg); }
+    22% { transform: translate(13px, -10px) rotate(1.2deg); }
+    38% { transform: translate(-11px, -6px) rotate(-1deg); }
+    54% { transform: translate(10px, 7px) rotate(0.8deg); }
+    70% { transform: translate(-7px, -4px) rotate(-0.5deg); }
+    85% { transform: translate(4px, 3px); }
   }
   .confetti {
     position: absolute;
-    top: -12px;
+    top: -16px;
     width: 10px;
     height: 14px;
-    z-index: 15;
     pointer-events: none;
     animation: confetti-fall linear forwards;
   }
   @keyframes confetti-fall {
-    to { transform: translateY(110vh) rotate(720deg); opacity: 0.6; }
+    to { transform: translateY(112vh) rotate(900deg); opacity: 0.55; }
   }
   .spark {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    z-index: 16;
     pointer-events: none;
-    animation: spark-fly 0.85s ease-out forwards;
+    animation: spark-fly ease-out forwards;
   }
   @keyframes spark-fly {
     0% { transform: translate(0, 0) scale(1); opacity: 1; }
-    100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+    70% { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0.25); opacity: 0; }
+  }
+  .fx-emoji {
+    position: absolute;
+    top: -50px;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: emoji-fall linear forwards;
+  }
+  @keyframes emoji-fall {
+    to { transform: translateY(115vh) rotate(360deg); opacity: 0.8; }
+  }
+  .streak-banner {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.6rem;
+    font-weight: 900;
+    color: #ff8a00;
+    text-shadow: 0 0 18px rgba(255, 170, 0, 0.6), 0 2px 0 #fff;
+    pointer-events: none;
+    animation: streak-pop 1.1s ease forwards;
+    white-space: nowrap;
+  }
+  @keyframes streak-pop {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    25% { opacity: 1; transform: translate(-50%, -50%) scale(1.15); }
+    45% { transform: translate(-50%, -50%) scale(1); }
+    80% { opacity: 1; }
+    100% { opacity: 0; transform: translate(-50%, -70%) scale(1.05); }
+  }
+  .vignette-ng {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(232,83,79,0) 55%, rgba(200, 30, 30, 0.4) 100%);
+    animation: vig-fade 0.8s ease forwards;
+  }
+  @keyframes vig-fade {
+    0% { opacity: 0; } 30% { opacity: 1; } 100% { opacity: 0; }
   }
 
   .next-btn {
@@ -496,9 +734,11 @@
     h1 { font-size: 1.35rem; }
     .start-hero { margin: -22px -14px 16px; height: 300px; padding-top: 20px; }
     .hero-title { font-size: 1.1rem; padding: 5px 20px; }
-    .mode-cards { grid-template-columns: 1fr; gap: 8px; }
-    .mode-card { display: flex; align-items: center; gap: 12px; text-align: left; padding: 10px 14px; }
-    .mode-card .m-emoji { font-size: 1.5rem; }
+    .mode-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mode-card { padding: 10px 6px; }
+    .mode-card .m-emoji { font-size: 1.4rem; }
+    .mode-card .m-name { font-size: 0.85rem; }
+    .mode-card .m-desc { font-size: 0.64rem; }
     .halo-frame { width: 160px; height: 160px; }
     .halo-frame img { width: 128px; height: 128px; }
     .portrait-q { height: 200px; }
@@ -514,12 +754,17 @@
     .reveal-judge { font-size: 1.25rem; margin-bottom: 8px; }
     .profile-table { font-size: 0.85rem; }
     .stamp { font-size: 5rem; }
-    .stamp.mega { font-size: 6.5rem; }
+    .stamp.mega { font-size: 7rem; }
+    .streak-banner { font-size: 1.8rem; }
     .score-big { font-size: 2.3rem; }
+    .study-grid { grid-template-columns: repeat(3, 1fr); max-height: 60vh; }
+    .study-item img { width: 62px; height: 62px; }
   }
 </style>
 </head>
 <body>
+
+<div id="fx-layer"></div>
 
 <div class="card" id="card">
   <div class="stamp" id="stamp"></div>
@@ -536,29 +781,40 @@
     <div class="mode-cards" id="mode-cards">
       <div class="mode-card selected" data-mode="normal">
         <span class="m-emoji">😇</span>
-        <div><div class="m-name">ヘイロークイズ</div><div class="m-desc">定番の4択。顔アイコン付き</div></div>
+        <div><div class="m-name">ヘイロークイズ</div><div class="m-desc">定番の4択</div></div>
       </div>
       <div class="mode-card" data-mode="hard">
         <span class="m-emoji">🔥</span>
-        <div><div class="m-name">ハードモード</div><div class="m-desc">8択・名前のみ・同じ学園の生徒が混ざる</div></div>
+        <div><div class="m-name">ハードモード</div><div class="m-desc">8択・同じ学園が混ざる</div></div>
       </div>
       <div class="mode-card" data-mode="surname">
         <span class="m-emoji">📛</span>
-        <div><div class="m-name">苗字当てクイズ</div><div class="m-desc">立ち絵と名前から正しい苗字を当てる</div></div>
+        <div><div class="m-name">苗字当てクイズ</div><div class="m-desc">立ち絵から苗字を当てる</div></div>
+      </div>
+      <div class="mode-card" data-mode="study">
+        <span class="m-emoji">📖</span>
+        <div><div class="m-name">学習モード</div><div class="m-desc">全キャラの図鑑で暗記</div></div>
       </div>
     </div>
 
-    <p class="section-label">出題数</p>
-    <div class="mode-row" id="mode-row">
-      <button class="mode-btn selected" data-count="10">10問</button>
-      <button class="mode-btn" data-count="25">25問</button>
-      <button class="mode-btn" data-count="50">50問</button>
-      <button class="mode-btn" data-count="all">全問</button>
+    <div class="sub-options hidden" id="surname-options">
+      <button class="seg selected" data-fmt="choice">4択で答える</button>
+      <button class="seg" data-fmt="input">入力して答える</button>
     </div>
 
-    <div class="fx-toggle" id="fx-toggle">
-      <span class="track"><span class="knob"></span></span>
-      <span>🎆 ド派手エフェクト</span>
+    <div id="quiz-config">
+      <p class="section-label">出題数</p>
+      <div class="mode-row" id="mode-row">
+        <button class="mode-btn selected" data-count="10">10問</button>
+        <button class="mode-btn" data-count="25">25問</button>
+        <button class="mode-btn" data-count="50">50問</button>
+        <button class="mode-btn" data-count="all">全問</button>
+      </div>
+
+      <div class="fx-toggle" id="fx-toggle">
+        <span class="track"><span class="knob"></span></span>
+        <span>🎆 ド派手エフェクト</span>
+      </div>
     </div>
 
     <button class="primary-btn" id="btn-start">スタート</button>
@@ -580,6 +836,11 @@
       <img class="portrait-q hidden" id="q-portrait" src="" alt="立ち絵">
       <p class="question-text" id="q-text">このヘイローは誰のもの？</p>
       <div class="choices" id="q-choices"></div>
+      <div class="type-answer hidden" id="q-type">
+        <input type="text" id="q-input" placeholder="苗字を入力（漢字 or ひらがな）" autocomplete="off">
+        <button id="btn-submit">回答</button>
+      </div>
+      <p class="type-hint hidden" id="q-type-hint">読み仮名（ひらがな）でも正解になります</p>
       <p class="key-tip" id="q-keytip">キーボードの数字キーでも回答できます</p>
     </div>
 
@@ -592,6 +853,7 @@
           <div class="reveal-info">
             <div class="label">正解</div>
             <div class="fullname" id="rv-fullname"></div>
+            <div class="fn-reading" id="rv-reading"></div>
             <img class="halo-mini" id="rv-halo" src="" alt="">
             <table class="profile-table">
               <tr><th>学園</th><td id="rv-school"></td></tr>
@@ -605,6 +867,21 @@
         <p class="key-tip">Enter / Space でも進めます</p>
       </div>
     </div>
+  </div>
+
+  <!-- 学習モード画面 -->
+  <div id="screen-study" class="hidden">
+    <div class="status-row">
+      <button class="home-btn" id="btn-study-home">⌂ トップへ</button>
+      <span style="font-weight:800; color:var(--ba-navy);">📖 学習モード</span>
+      <span></span>
+    </div>
+    <div class="study-tools">
+      <input type="text" id="study-search" placeholder="🔍 名前で検索" autocomplete="off">
+    </div>
+    <div class="school-chips" id="school-chips"></div>
+    <div class="study-count" id="study-count"></div>
+    <div class="study-grid" id="study-grid"></div>
   </div>
 
   <!-- 結果画面 -->
@@ -621,22 +898,46 @@
   </div>
 </div>
 
+<!-- 学習モード詳細モーダル -->
+<div class="modal hidden" id="study-modal">
+  <div class="modal-card">
+    <button class="modal-close" id="modal-close">✕</button>
+    <div class="reveal-body">
+      <img class="portrait" id="sd-portrait" src="" alt="">
+      <div class="reveal-info">
+        <div class="fullname" id="sd-fullname"></div>
+        <div class="fn-reading" id="sd-reading"></div>
+        <img class="halo-mini" id="sd-halo" src="" alt="">
+        <table class="profile-table">
+          <tr><th>学園</th><td id="sd-school"></td></tr>
+          <tr><th>部活</th><td id="sd-club"></td></tr>
+          <tr><th>誕生日</th><td id="sd-birthday"></td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="modal-nav">
+      <button id="sd-prev">← 前へ</button>
+      <button id="sd-next">次へ →</button>
+    </div>
+  </div>
+</div>
+
 <script src="data.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
-  const screens = { start: $("screen-start"), quiz: $("screen-quiz"), result: $("screen-result") };
+  const screens = { start: $("screen-start"), quiz: $("screen-quiz"), study: $("screen-study"), result: $("screen-result") };
   const show = (name) => Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
 
-  // 苗字当て用：フルネーム＝苗字＋名前 の形のキャラのみ
   const SURNAME_POOL = CHARACTERS.filter(
     (c) => c.fullName !== c.name && c.fullName.endsWith(c.name)
   ).map((c) => ({ ...c, surname: c.fullName.slice(0, c.fullName.length - c.name.length) }));
 
-  const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "");
+  const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "") || "その他";
 
-  let mode = "normal";      // normal | hard | surname
-  let hade = false;         // ド派手エフェクト
+  let mode = "normal";        // normal | hard | surname | study
+  let surnameFmt = "choice";  // choice | input
+  let hade = false;
   let questionCount = 10;
   let queue = [];
   let qIndex = 0;
@@ -655,6 +956,10 @@
     return a;
   };
 
+  // カタカナ→ひらがな・空白除去（入力式の判定用）
+  const normalize = (s) =>
+    s.trim().replace(/[ 　]/g, "").replace(/[ァ-ヶ]/g, (m) => String.fromCharCode(m.charCodeAt(0) - 0x60));
+
   const faceHtml = (c) =>
     c.face
       ? `<span class="face"><img src="images/face/${c.id}.png" alt=""></span>`
@@ -667,6 +972,17 @@
     document.querySelectorAll(".mode-card").forEach((c) => c.classList.remove("selected"));
     cardEl.classList.add("selected");
     mode = cardEl.dataset.mode;
+    $("surname-options").classList.toggle("hidden", mode !== "surname");
+    $("quiz-config").classList.toggle("hidden", mode === "study");
+    $("btn-start").textContent = mode === "study" ? "図鑑を開く" : "スタート";
+  });
+
+  $("surname-options").addEventListener("click", (e) => {
+    const seg = e.target.closest(".seg");
+    if (!seg) return;
+    document.querySelectorAll("#surname-options .seg").forEach((s) => s.classList.remove("selected"));
+    seg.classList.add("selected");
+    surnameFmt = seg.dataset.fmt;
   });
 
   $("mode-row").addEventListener("click", (e) => {
@@ -682,13 +998,22 @@
     $("fx-toggle").classList.toggle("on", hade);
   });
 
-  $("btn-start").addEventListener("click", startGame);
+  $("btn-start").addEventListener("click", () => {
+    if (mode === "study") openStudy();
+    else startGame();
+  });
   $("btn-retry").addEventListener("click", () => show("start"));
   $("btn-next").addEventListener("click", nextQuestion);
   $("btn-home").addEventListener("click", () => {
     if (confirm("クイズを中断してトップに戻りますか？")) show("start");
   });
+  $("btn-study-home").addEventListener("click", () => show("start"));
+  $("btn-submit").addEventListener("click", submitTyped);
+  $("q-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { e.preventDefault(); submitTyped(); }
+  });
 
+  /* ---------- quiz flow ---------- */
   function pool() {
     return mode === "surname" ? SURNAME_POOL : CHARACTERS;
   }
@@ -712,10 +1037,8 @@
     $("q-progress").style.width = `${(qIndex / queue.length) * 100}%`;
   }
 
-  /* ---------- 出題 ---------- */
   function buildOptions(char) {
     if (mode === "surname") {
-      // 苗字の選択肢：正解＋他キャラの苗字3つ（重複なし）
       const others = shuffle([...new Set(SURNAME_POOL.map((c) => c.surname))].filter((s) => s !== char.surname)).slice(0, 3);
       return shuffle([
         { label: char.surname, correct: true, faceChar: null },
@@ -723,17 +1046,15 @@
       ]);
     }
     if (mode === "hard") {
-      // 同じ学園の生徒を優先して8択
       const key = schoolKey(char);
-      const same = shuffle(CHARACTERS.filter((c) => c.id !== char.id && key && schoolKey(c) === key));
-      const rest = shuffle(CHARACTERS.filter((c) => c.id !== char.id && !same.includes(c)));
+      const same = shuffle(CHARACTERS.filter((c) => c.id !== char.id && schoolKey(c) === key));
+      const rest = shuffle(CHARACTERS.filter((c) => c.id !== char.id && schoolKey(c) !== key));
       const distractors = [...same, ...rest].slice(0, 7);
       return shuffle([
         { label: char.name, correct: true, faceChar: null },
         ...distractors.map((c) => ({ label: c.name, correct: false, faceChar: null })),
       ]);
     }
-    // normal
     const distractors = shuffle(CHARACTERS.filter((c) => c.id !== char.id)).slice(0, 3);
     return shuffle([
       { label: char.name, correct: true, faceChar: char },
@@ -749,17 +1070,31 @@
     updateStatus();
 
     const char = queue[qIndex];
+    const typing = mode === "surname" && surnameFmt === "input";
 
     if (mode === "surname") {
       $("q-halo-frame").classList.add("hidden");
       $("q-portrait").classList.remove("hidden");
       $("q-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
-      $("q-text").textContent = `「${char.name}」の苗字はどれ？`;
+      $("q-text").textContent = `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`;
     } else {
       $("q-halo-frame").classList.remove("hidden");
       $("q-portrait").classList.add("hidden");
       $("q-image").src = `images/${char.id}.png`;
       $("q-text").textContent = mode === "hard" ? "このヘイローは誰のもの？（8択）" : "このヘイローは誰のもの？";
+    }
+
+    $("q-choices").classList.toggle("hidden", typing);
+    $("q-type").classList.toggle("hidden", !typing);
+    $("q-type-hint").classList.toggle("hidden", !typing);
+    $("q-keytip").classList.toggle("hidden", typing);
+
+    if (typing) {
+      $("q-input").value = "";
+      $("q-input").disabled = false;
+      $("btn-submit").disabled = false;
+      setTimeout(() => $("q-input").focus(), 50);
+      return;
     }
 
     const options = buildOptions(char);
@@ -778,61 +1113,67 @@
     });
   }
 
-  /* ---------- 回答 ---------- */
-  function answer(picked, btn) {
-    if (locked) return;
-    locked = true;
+  function judge(correct, pickedLabel) {
     const char = queue[qIndex];
-    const buttons = [...document.querySelectorAll(".choice-btn")];
-    buttons.forEach((b) => (b.disabled = true));
-
-    const correct = picked.correct;
     if (correct) {
       score++;
       streak++;
-      btn.classList.add("correct");
       stampEffect("〇", true);
-      confettiBurst(hade ? 130 : 36);
-      if (hade) {
-        fireworks();
-        flashCard("flash-rainbow");
-      }
+      fxCorrect();
     } else {
       streak = 0;
-      btn.classList.add("wrong");
-      misses.push({ char, pickedLabel: picked.label });
+      misses.push({ char, pickedLabel });
       stampEffect("✕", false);
-      flashCard("flash-ng");
-      if (hade) quakeCard();
+      fxWrong();
     }
+    updateStatus();
+    setTimeout(() => showReveal(char, pickedLabel, correct), 850);
+  }
+
+  function answer(picked, btn) {
+    if (locked) return;
+    locked = true;
+    const buttons = [...document.querySelectorAll(".choice-btn")];
+    buttons.forEach((b) => (b.disabled = true));
+    btn.classList.add(picked.correct ? "correct" : "wrong");
     buttons.forEach((b) => {
       if (b.dataset.correct) b.classList.add("correct");
       else if (!b.classList.contains("wrong")) b.classList.add("dim");
     });
-    updateStatus();
-
-    setTimeout(() => showReveal(char, picked, correct), 850);
+    judge(picked.correct, picked.label);
   }
 
-  function showReveal(char, picked, correct) {
+  function submitTyped() {
+    if (locked) return;
+    const char = queue[qIndex];
+    const input = $("q-input").value;
+    if (!input.trim()) return;
+    locked = true;
+    $("q-input").disabled = true;
+    $("btn-submit").disabled = true;
+    const n = normalize(input);
+    const correct = n === normalize(char.surname) || (char.reading && n === normalize(char.reading));
+    judge(correct, input.trim());
+  }
+
+  function showReveal(char, pickedLabel, correct) {
     revealing = true;
     $("q-view").classList.add("hidden");
     $("r-view").classList.remove("hidden");
 
-    const judge = $("rv-judge");
-    judge.textContent = correct ? "正解！" : "不正解…";
-    judge.className = "reveal-judge " + (correct ? "ok" : "ng");
+    const judgeEl = $("rv-judge");
+    judgeEl.textContent = correct ? "正解！" : "不正解…";
+    judgeEl.className = "reveal-judge " + (correct ? "ok" : "ng");
 
-    const portrait = $("rv-portrait");
-    portrait.src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
-
+    $("rv-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
     $("rv-fullname").textContent = char.fullName;
+    $("rv-reading").textContent = char.reading ? `（${char.reading}${char.fullName !== char.name ? "" : ""}）` : "";
     $("rv-halo").src = `images/${char.id}.png`;
     const dash = (v) => (v && v !== "-" ? v : "—");
     $("rv-school").textContent = dash(char.school);
     $("rv-club").textContent = dash(char.club);
     $("rv-birthday").textContent = dash(char.birthday);
-    $("rv-picked").textContent = correct ? "" : `あなたの回答：${picked.label}`;
+    $("rv-picked").textContent = correct ? "" : `あなたの回答：${pickedLabel}`;
   }
 
   function nextQuestion() {
@@ -843,6 +1184,30 @@
   }
 
   /* ---------- effects ---------- */
+  const FX_COLORS = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff", "#ff9d5c"];
+  const fxLayer = () => $("fx-layer");
+
+  function fxCorrect() {
+    if (!hade) {
+      confettiBurst(36);
+      return;
+    }
+    confettiBurst(240);
+    fireworks(7, 34);
+    emojiRain(["🎉", "⭐", "✨", "😇", "💙", "🎊"], 20);
+    flashCard("flash-rainbow");
+    pulseCard();
+    if (streak >= 3) streakBanner(`🔥 ${streak}連続！`);
+  }
+
+  function fxWrong() {
+    flashCard("flash-ng");
+    if (!hade) return;
+    quakeCard();
+    vignette();
+    emojiRain(["💥", "😱", "💦", "🌀"], 12);
+  }
+
   function stampEffect(text, ok) {
     const stamp = $("stamp");
     stamp.textContent = text;
@@ -858,6 +1223,13 @@
     card.classList.add(cls);
   }
 
+  function pulseCard() {
+    const card = $("card");
+    card.classList.remove("pulse-win");
+    void card.offsetWidth;
+    card.classList.add("pulse-win");
+  }
+
   function quakeCard() {
     const card = $("card");
     card.classList.remove("quake");
@@ -865,46 +1237,77 @@
     card.classList.add("quake");
   }
 
-  const FX_COLORS = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff", "#ff9d5c"];
+  function vignette() {
+    const v = document.createElement("div");
+    v.className = "vignette-ng";
+    fxLayer().appendChild(v);
+    setTimeout(() => v.remove(), 850);
+  }
+
+  function streakBanner(text) {
+    const b = document.createElement("div");
+    b.className = "streak-banner";
+    b.textContent = text;
+    fxLayer().appendChild(b);
+    setTimeout(() => b.remove(), 1150);
+  }
 
   function confettiBurst(count) {
-    const card = $("card");
+    const layer = fxLayer();
     for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
       p.className = "confetti";
       p.style.left = Math.random() * 100 + "%";
       p.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
-      p.style.animationDuration = 0.9 + Math.random() * 1.1 + "s";
-      p.style.animationDelay = Math.random() * 0.3 + "s";
+      p.style.animationDuration = 0.9 + Math.random() * 1.4 + "s";
+      p.style.animationDelay = Math.random() * 0.4 + "s";
       p.style.transform = `rotate(${Math.random() * 360}deg)`;
-      if (Math.random() < 0.4) p.style.borderRadius = "50%";
-      card.appendChild(p);
-      setTimeout(() => p.remove(), 2600);
+      const r = Math.random();
+      if (r < 0.3) p.style.borderRadius = "50%";
+      else if (r < 0.45) { p.style.width = "5px"; p.style.height = "18px"; }
+      layer.appendChild(p);
+      setTimeout(() => p.remove(), 3000);
     }
   }
 
-  function fireworks() {
-    const card = $("card");
-    const rect = card.getBoundingClientRect();
-    for (let b = 0; b < 3; b++) {
-      const cx = 15 + Math.random() * 70; // %
-      const cy = 15 + Math.random() * 45; // %
+  function fireworks(bursts, particles) {
+    const layer = fxLayer();
+    for (let b = 0; b < bursts; b++) {
+      const cx = 8 + Math.random() * 84;
+      const cy = 8 + Math.random() * 60;
       setTimeout(() => {
-        for (let i = 0; i < 26; i++) {
+        for (let i = 0; i < particles; i++) {
           const s = document.createElement("div");
           s.className = "spark";
-          const angle = (Math.PI * 2 * i) / 26 + Math.random() * 0.3;
-          const dist = 60 + Math.random() * 90;
+          const angle = (Math.PI * 2 * i) / particles + Math.random() * 0.25;
+          const dist = 70 + Math.random() * 130;
           s.style.left = cx + "%";
           s.style.top = cy + "%";
-          s.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+          const col = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+          s.style.background = col;
+          s.style.boxShadow = `0 0 10px ${col}`;
           s.style.setProperty("--dx", Math.cos(angle) * dist + "px");
           s.style.setProperty("--dy", Math.sin(angle) * dist + "px");
-          s.style.boxShadow = `0 0 8px ${s.style.background}`;
-          card.appendChild(s);
-          setTimeout(() => s.remove(), 950);
+          s.style.animationDuration = 0.7 + Math.random() * 0.5 + "s";
+          layer.appendChild(s);
+          setTimeout(() => s.remove(), 1300);
         }
-      }, b * 180);
+      }, b * 160);
+    }
+  }
+
+  function emojiRain(emojis, count) {
+    const layer = fxLayer();
+    for (let i = 0; i < count; i++) {
+      const e = document.createElement("div");
+      e.className = "fx-emoji";
+      e.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      e.style.left = Math.random() * 96 + "%";
+      e.style.fontSize = 1.4 + Math.random() * 1.6 + "rem";
+      e.style.animationDuration = 1.2 + Math.random() * 1.4 + "s";
+      e.style.animationDelay = Math.random() * 0.5 + "s";
+      layer.appendChild(e);
+      setTimeout(() => e.remove(), 3300);
     }
   }
 
@@ -925,8 +1328,8 @@
     $("r-rank").textContent = rank;
 
     if (rate === 100) {
-      confettiBurst(hade ? 160 : 50);
-      if (hade) fireworks();
+      confettiBurst(hade ? 300 : 50);
+      if (hade) { fireworks(9, 36); emojiRain(["🏆", "🎉", "⭐", "😇"], 24); }
     }
 
     const missBlock = $("r-miss-block");
@@ -942,9 +1345,93 @@
     });
   }
 
+  /* ---------- 学習モード ---------- */
+  let studyList = [];
+  let studyIndex = 0;
+  let studySchool = "すべて";
+
+  function openStudy() {
+    show("study");
+    if (!$("school-chips").childElementCount) buildChips();
+    renderStudyGrid();
+  }
+
+  function buildChips() {
+    const counts = {};
+    CHARACTERS.forEach((c) => {
+      const k = schoolKey(c);
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    const keys = ["すべて", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+    const box = $("school-chips");
+    keys.forEach((k) => {
+      const chip = document.createElement("button");
+      chip.className = "chip" + (k === "すべて" ? " selected" : "");
+      chip.textContent = k === "すべて" ? `すべて (${CHARACTERS.length})` : `${k} (${counts[k]})`;
+      chip.dataset.school = k;
+      chip.addEventListener("click", () => {
+        studySchool = k;
+        document.querySelectorAll(".chip").forEach((c) => c.classList.remove("selected"));
+        chip.classList.add("selected");
+        renderStudyGrid();
+      });
+      box.appendChild(chip);
+    });
+  }
+
+  function renderStudyGrid() {
+    const q = $("study-search").value.trim();
+    studyList = CHARACTERS.filter((c) => {
+      if (studySchool !== "すべて" && schoolKey(c) !== studySchool) return false;
+      if (q && !c.name.includes(q) && !c.fullName.includes(q) && !(c.reading || "").includes(q)) return false;
+      return true;
+    });
+    $("study-count").textContent = `${studyList.length}件`;
+    const grid = $("study-grid");
+    grid.innerHTML = "";
+    studyList.forEach((c, i) => {
+      const item = document.createElement("div");
+      item.className = "study-item";
+      item.innerHTML = `<img src="images/${c.id}.png" loading="lazy" alt=""><span class="s-name">${c.name}</span>`;
+      item.addEventListener("click", () => openDetail(i));
+      grid.appendChild(item);
+    });
+  }
+
+  $("study-search").addEventListener("input", renderStudyGrid);
+
+  function openDetail(i) {
+    studyIndex = i;
+    const c = studyList[i];
+    $("sd-portrait").src = c.full ? `images/full/${c.id}.png` : `images/${c.id}.png`;
+    $("sd-fullname").textContent = c.fullName;
+    $("sd-reading").textContent = c.reading ? `（${c.reading}）` : "";
+    $("sd-halo").src = `images/${c.id}.png`;
+    const dash = (v) => (v && v !== "-" ? v : "—");
+    $("sd-school").textContent = dash(c.school);
+    $("sd-club").textContent = dash(c.club);
+    $("sd-birthday").textContent = dash(c.birthday);
+    $("study-modal").classList.remove("hidden");
+  }
+
+  const closeModal = () => $("study-modal").classList.add("hidden");
+  $("modal-close").addEventListener("click", closeModal);
+  $("study-modal").addEventListener("click", (e) => {
+    if (e.target === $("study-modal")) closeModal();
+  });
+  $("sd-prev").addEventListener("click", () => openDetail((studyIndex - 1 + studyList.length) % studyList.length));
+  $("sd-next").addEventListener("click", () => openDetail((studyIndex + 1) % studyList.length));
+
   /* ---------- keyboard ---------- */
   document.addEventListener("keydown", (e) => {
+    if (!$("study-modal").classList.contains("hidden")) {
+      if (e.key === "Escape") closeModal();
+      if (e.key === "ArrowLeft") $("sd-prev").click();
+      if (e.key === "ArrowRight") $("sd-next").click();
+      return;
+    }
     if (screens.quiz.classList.contains("hidden")) return;
+    if (document.activeElement === $("q-input")) return;
     if (revealing) {
       if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
