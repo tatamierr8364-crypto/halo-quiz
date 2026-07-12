@@ -191,7 +191,7 @@ const CHARACTERS = [
   { id: "190", name: "ネツァク", fullName: "ネツァク", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
   { id: "191", name: "ホド", fullName: "ホド", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
   { id: "192", name: "イェソド", fullName: "イェソド", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
-  { id: "193", name: "ダアト", fullName: "ダアト", reading: "", face: false, full: true, school: "", club: "", birthday: "" },
+  { id: "193", name: "ダアト", fullName: "ダアト", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
   { id: "194", name: "マルクト", fullName: "マルクト", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
-  { id: "195", name: "デカグラマトン", fullName: "デカグラマトン", reading: "", face: false, full: true, school: "", club: "", birthday: "" },
+  { id: "195", name: "デカグラマトン", fullName: "デカグラマトン", reading: "", face: true, full: true, school: "", club: "", birthday: "" },
 ];
