@@ -787,6 +787,8 @@
     top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
+    font-family: "Exo 2", "Noto Sans JP", sans-serif;
+    font-style: italic;
     font-size: 2.6rem;
     font-weight: 900;
     color: #ff8a00;
@@ -852,27 +854,39 @@
     width: 220%;
     padding: 20px 0;
     background: linear-gradient(90deg,
-      rgba(160, 0, 20, 0) 0%,
-      rgba(190, 10, 25, 0.96) 18%,
-      rgba(110, 0, 10, 0.98) 50%,
-      rgba(190, 10, 25, 0.96) 82%,
-      rgba(160, 0, 20, 0) 100%);
-    color: #ffe38a;
-    font-size: 3.2rem;
-    font-weight: 900;
+      rgba(140, 0, 15, 0) 0%,
+      #9e0616 14%,
+      #5c0008 50%,
+      #9e0616 86%,
+      rgba(140, 0, 15, 0) 100%);
+    border-top: 3px solid rgba(255, 235, 170, 0.85);
+    border-bottom: 3px solid rgba(255, 235, 170, 0.85);
+    font-size: 3.4rem;
     text-align: center;
-    letter-spacing: 0.18em;
     transform: rotate(-6deg);
-    text-shadow: 0 0 24px rgba(255, 200, 60, 0.95), 0 4px 0 rgba(60, 0, 0, 0.8);
     animation: cutin 1.15s cubic-bezier(0.25, 0.9, 0.3, 1) forwards;
     pointer-events: none;
     white-space: nowrap;
     z-index: 25;
   }
+  .cut-in-text {
+    font-family: "Exo 2", "Noto Sans JP", sans-serif;
+    font-style: italic;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    background: linear-gradient(180deg, #fffbe8 0%, #ffe9a0 40%, #ffc84e 70%, #ffa726 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 3px 0 rgba(70, 5, 0, 0.9))
+            drop-shadow(0 0 6px rgba(120, 10, 0, 0.8))
+            drop-shadow(0 0 22px rgba(255, 200, 70, 0.95));
+  }
   @keyframes cutin {
-    0% { left: -220%; opacity: 0.6; }
-    20% { left: -60%; opacity: 1; }
-    62% { left: -60%; }
+    0% { left: -220%; opacity: 0.7; }
+    18% { left: -60%; opacity: 1; }
+    62% { left: -60%; opacity: 1; }
+    88% { opacity: 1; }
     100% { left: 160%; opacity: 0; }
   }
   /* 虹色フィーバーオーバーレイ */
@@ -1583,7 +1597,10 @@
   function cutIn(text) {
     const c = document.createElement("div");
     c.className = "cut-in";
-    c.textContent = text;
+    const t = document.createElement("span");
+    t.className = "cut-in-text";
+    t.textContent = text;
+    c.appendChild(t);
     fxLayer().appendChild(c);
     setTimeout(() => c.remove(), 1250);
   }
