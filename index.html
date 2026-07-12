@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ヘイロークイズ — ブルーアーカイブ</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>😇</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,700;1,800;1,900&family=Noto+Sans+JP:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
   :root {
     --ba-blue: #128afa;
@@ -21,7 +24,7 @@
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    font-family: "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", sans-serif;
+    font-family: "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Meiryo", sans-serif;
     background:
       radial-gradient(1100px 560px at 88% -8%, rgba(99, 200, 246, 0.28), transparent 60%),
       radial-gradient(900px 520px at -8% 108%, rgba(18, 138, 250, 0.18), transparent 55%),
@@ -53,7 +56,8 @@
     background: repeating-linear-gradient(115deg, var(--ba-blue) 0 22px, var(--ba-sky) 22px 44px);
     z-index: 5;
   }
-  h1 { font-size: 1.6rem; letter-spacing: 0.05em; margin-bottom: 4px; }
+  h1 { font-size: 1.6rem; font-weight: 900; font-style: italic; letter-spacing: 0.08em; margin-bottom: 4px; }
+  #q-counter, #q-score { font-family: "Exo 2", "Noto Sans JP", sans-serif; font-style: italic; }
   .subtitle { color: #7d8a99; font-size: 0.85rem; margin-bottom: 22px; }
 
   /* ---------- effects layer (全画面) ---------- */
@@ -85,23 +89,58 @@
     pointer-events: none;
   }
   .start-hero .logo {
-    width: min(360px, 72%);
+    width: min(280px, 58%);
     filter: drop-shadow(0 4px 14px rgba(11, 74, 132, 0.45));
     position: relative;
     z-index: 1;
   }
-  .hero-title {
+  /* ブルアカロゴ風タイトル */
+  .quiz-logo {
     position: relative;
     z-index: 1;
-    font-size: 1.5rem;
-    font-weight: 800;
+    display: inline-block;
+    font-family: "Exo 2", "Noto Sans JP", sans-serif;
     font-style: italic;
-    letter-spacing: 0.25em;
+    font-weight: 900;
+    font-size: 3.6rem;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    background: linear-gradient(180deg, #eaf8ff 0%, #8fd6ff 34%, #128afa 72%, #0b5cb0 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.92);
+    filter: drop-shadow(0 3px 0 rgba(255, 255, 255, 0.85))
+            drop-shadow(0 7px 16px rgba(9, 60, 110, 0.55));
+    padding: 0.1em 0.55em 0.12em 0.2em;
+  }
+  /* Oを貫くヘイローリング */
+  .quiz-logo .ring {
+    position: absolute;
+    width: 1.45em;
+    height: 0.58em;
+    border: 0.055em solid #aef1ff;
+    border-radius: 50%;
+    left: 2.72em;
+    top: -0.26em;
+    transform: rotate(-16deg);
+    box-shadow: 0 0 14px rgba(99, 200, 246, 0.95), inset 0 0 8px rgba(99, 200, 246, 0.6);
+    pointer-events: none;
+  }
+  .quiz-logo-sub {
+    position: relative;
+    z-index: 1;
+    margin-top: 10px;
+    font-size: 0.95rem;
+    font-weight: 900;
+    font-style: italic;
+    letter-spacing: 0.42em;
     color: #fff;
     background: linear-gradient(135deg, var(--ba-blue), var(--ba-blue-dark));
-    padding: 8px 34px;
-    clip-path: polygon(12px 0, 100% 0, calc(100% - 12px) 100%, 0 100%);
+    padding: 5px 22px 5px 28px;
+    clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
     box-shadow: 0 4px 14px rgba(18, 138, 250, 0.45);
+    display: inline-block;
   }
   .section-label {
     font-size: 0.92rem;
@@ -891,7 +930,8 @@
 
   /* ---------- result screen ---------- */
   .score-big {
-    font-size: 3.2rem;
+    font-family: "Exo 2", "Noto Sans JP", sans-serif;
+    font-size: 3.4rem;
     font-weight: 900;
     font-style: italic;
     background: linear-gradient(135deg, var(--ba-blue), var(--ba-sky));
@@ -952,7 +992,8 @@
     .card { padding: 22px 14px; border-radius: 16px; }
     h1 { font-size: 1.35rem; }
     .start-hero { margin: -22px -14px 16px; height: 300px; padding-top: 20px; }
-    .hero-title { font-size: 1.1rem; padding: 5px 20px; }
+    .quiz-logo { font-size: 2.1rem; }
+    .quiz-logo-sub { font-size: 0.72rem; letter-spacing: 0.3em; margin-top: 6px; }
     .mode-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
     .mode-card { padding: 10px 6px; }
     .mode-card .m-emoji { font-size: 1.4rem; }
@@ -992,7 +1033,11 @@
   <div id="screen-start">
     <div class="start-hero">
       <img class="logo" src="images/logo.webp" alt="ブルーアーカイブ">
-      <div class="hero-title">HALO クイズ</div>
+      <div style="position:relative; z-index:1; text-align:center;">
+        <div class="quiz-logo">HALO QUIZ<span class="ring"></span></div>
+        <br>
+        <div class="quiz-logo-sub">ヘイロークイズ</div>
+      </div>
     </div>
     <p class="subtitle">ヘイローを見て、どのキャラクターのものか当てよう！（全195種）</p>
 
