@@ -1260,6 +1260,7 @@
             <img class="halo-mini" id="rv-halo" src="" alt="">
             <table class="profile-table">
               <tr><th>学園</th><td id="rv-school"></td></tr>
+              <tr><th>学年</th><td id="rv-grade"></td></tr>
               <tr><th>部活</th><td id="rv-club"></td></tr>
               <tr><th>誕生日</th><td id="rv-birthday"></td></tr>
             </table>
@@ -1282,8 +1283,8 @@
     <div class="study-tools">
       <input type="text" id="study-search" placeholder="🔍 名前で検索" autocomplete="off">
       <div class="sub-options" style="margin: 0;" id="study-view-toggle">
-        <button class="seg selected" data-view="halo"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(-14 12 12)"/></svg>ヘイロー</button>
-        <button class="seg" data-view="face"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>顔</button>
+        <button class="seg selected" data-view="face"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>顔</button>
+        <button class="seg" data-view="halo"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(-14 12 12)"/></svg>ヘイロー</button>
       </div>
     </div>
     <div class="school-chips" id="school-chips"></div>
@@ -1317,6 +1318,7 @@
         <img class="halo-mini" id="sd-halo" src="" alt="">
         <table class="profile-table">
           <tr><th>学園</th><td id="sd-school"></td></tr>
+          <tr><th>学年</th><td id="sd-grade"></td></tr>
           <tr><th>部活</th><td id="sd-club"></td></tr>
           <tr><th>誕生日</th><td id="sd-birthday"></td></tr>
           <tr><th>年齢</th><td id="sd-age"></td></tr>
@@ -1351,6 +1353,12 @@
   ).map((c) => ({ ...c, surname: c.fullName.slice(0, c.fullName.length - c.name.length) }));
 
   const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "") || "その他";
+  // "アビドス高等学校2年生" → { school: "アビドス高等学校", grade: "2年生" }
+  const splitSchool = (c) => {
+    const s = c.school || "";
+    const m = s.match(/([0-9０-９]+年生)$/);
+    return { school: m ? s.slice(0, s.length - m[1].length) : s, grade: m ? m[1] : "" };
+  };
   const BIRTHDAY_POOL = CHARACTERS.filter((c) => c.birthday && c.birthday !== "-");
 
   /* ---- 復習モード: 間違えた問題を「タイプ:キャラID」でlocalStorageに記録 ---- */
@@ -1819,7 +1827,9 @@
     $("rv-reading").textContent = char.reading ? `（${char.reading}${char.fullName !== char.name ? "" : ""}）` : "";
     $("rv-halo").src = `images/${char.id}.png`;
     const dash = (v) => (v && v !== "-" ? v : "—");
-    $("rv-school").textContent = dash(char.school);
+    const ss = splitSchool(char);
+    $("rv-school").textContent = dash(ss.school);
+    $("rv-grade").textContent = dash(ss.grade);
     $("rv-club").textContent = dash(char.club);
     $("rv-birthday").textContent = dash(char.birthday);
     $("rv-picked").textContent = correct ? "" : `あなたの回答：${pickedLabel}`;
@@ -2111,7 +2121,7 @@
   let studyList = [];
   let studyIndex = 0;
   let studySchool = "すべて";
-  let studyView = "halo";
+  let studyView = "face";
 
   $("study-view-toggle").addEventListener("click", (e) => {
     const seg = e.target.closest(".seg");
@@ -2193,7 +2203,9 @@
     $("sd-reading").textContent = c.reading ? `（${c.reading}）` : "";
     $("sd-halo").src = `images/${c.id}.png`;
     const dash = (v) => (v && v !== "-" ? v : "—");
-    $("sd-school").textContent = dash(c.school);
+    const ss = splitSchool(c);
+    $("sd-school").textContent = dash(ss.school);
+    $("sd-grade").textContent = dash(ss.grade);
     $("sd-club").textContent = dash(c.club);
     $("sd-birthday").textContent = dash(c.birthday);
     $("sd-age").textContent = dash(c.age);
