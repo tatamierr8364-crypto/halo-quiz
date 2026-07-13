@@ -672,6 +672,76 @@
     border-radius: 0 10px 10px 0;
   }
 
+  /* ---------- 推し機能 ---------- */
+  .fav-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: -8px 0 20px;
+  }
+  .fav-row .fav-label { font-size: 0.8rem; color: #e0507a; font-weight: 800; font-style: italic; }
+  .fav-row .face {
+    cursor: pointer;
+    width: 52px;
+    height: 52px;
+    border-color: #ffb3c9;
+    transition: transform 0.15s;
+  }
+  .fav-row .face:hover { transform: scale(1.1); }
+  .fav-row .fav-more { font-size: 0.8rem; font-weight: 800; color: #e0507a; }
+  .fav-btn {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #c2d3e2;
+    padding: 3px;
+    z-index: 2;
+    line-height: 0;
+  }
+  .fav-btn svg { width: 18px; height: 18px; }
+  .fav-btn.on { color: #ff5c8a; }
+  .fav-btn.on svg { fill: #ff5c8a; }
+  .study-item { position: relative; }
+  .sd-fav-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #c2d3e2;
+    vertical-align: middle;
+    margin-left: 8px;
+    padding: 0;
+    line-height: 0;
+  }
+  .sd-fav-btn svg { width: 26px; height: 26px; }
+  .sd-fav-btn.on { color: #ff5c8a; }
+  .sd-fav-btn.on svg { fill: #ff5c8a; }
+  .streak-banner.fav {
+    color: #ff5c8a;
+    text-shadow: 0 0 22px rgba(255, 92, 138, 0.75), 0 2px 0 #fff;
+  }
+
+  /* ---------- 出題範囲 ---------- */
+  .range-club {
+    border: 2px solid #d5e5f2;
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--ba-navy);
+    font-family: inherit;
+    margin-top: 8px;
+    max-width: 320px;
+    cursor: pointer;
+  }
+  .range-club:focus { outline: none; border-color: var(--ba-blue); }
+  #range-chips::-webkit-scrollbar { height: 5px; }
+
   /* 学習モード詳細モーダル */
   .modal {
     position: fixed;
@@ -1093,6 +1163,8 @@
     </div>
     <p class="subtitle">ヘイローを見て、どのキャラクターのものか当てよう！（全195種）</p>
 
+    <div class="fav-row hidden" id="fav-row"></div>
+
     <p class="section-label">モードを選んでください</p>
     <div class="mode-cards" id="mode-cards">
       <div class="mode-card selected" data-mode="normal">
@@ -1111,9 +1183,13 @@
         <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span>
         <div><div class="m-name">誕生日当てクイズ</div><div class="m-desc">生徒の誕生日を当てる</div></div>
       </div>
+      <div class="mode-card" data-mode="trivia">
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg></span>
+        <div><div class="m-name">雑学クイズ</div><div class="m-desc">説明文や趣味から誰かを当てる</div></div>
+      </div>
       <div class="mode-card" data-mode="review">
         <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span>
-        <div><div class="m-name">復習モード</div><div class="m-desc" id="review-desc">間違えたキャラを再挑戦</div></div>
+        <div><div class="m-name">復習モード</div><div class="m-desc" id="review-desc">間違えた問題を再挑戦</div></div>
       </div>
       <div class="mode-card" data-mode="study">
         <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
@@ -1127,6 +1203,12 @@
     </div>
 
     <div id="quiz-config">
+      <div id="range-config">
+        <p class="section-label">出題範囲</p>
+        <div class="school-chips" id="range-chips"></div>
+        <select class="range-club" id="range-club"></select>
+      </div>
+
       <p class="section-label">出題数</p>
       <div class="mode-row" id="mode-row">
         <button class="mode-btn selected" data-count="10">10問</button>
@@ -1154,6 +1236,7 @@
     <div id="q-view">
       <div class="halo-frame" id="q-halo-frame"><img id="q-image" src="" alt="ヘイロー"></div>
       <img class="portrait-q hidden" id="q-portrait" src="" alt="立ち絵">
+      <div class="bio hidden" id="q-trivia" style="margin-bottom: 16px;"></div>
       <p class="question-text" id="q-text">このヘイローは誰のもの？</p>
       <div class="choices" id="q-choices"></div>
       <div class="type-answer hidden" id="q-type">
@@ -1229,7 +1312,7 @@
     <div class="reveal-body">
       <img class="portrait" id="sd-portrait" src="" alt="">
       <div class="reveal-info">
-        <div class="fullname" id="sd-fullname"></div>
+        <div class="fullname" id="sd-fullname"><span id="sd-name-text"></span><button class="sd-fav-btn" id="sd-fav" title="推しに登録"><svg class="icon" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7z"/></svg></button></div>
         <div class="fn-reading" id="sd-reading"></div>
         <img class="halo-mini" id="sd-halo" src="" alt="">
         <table class="profile-table">
@@ -1257,7 +1340,10 @@
   const screens = { start: $("screen-start"), quiz: $("screen-quiz"), study: $("screen-study"), result: $("screen-result") };
   const show = (name) => {
     Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
-    if (name === "start") updateReviewBadge();
+    if (name === "start") {
+      updateReviewBadge();
+      renderFavRow();
+    }
   };
 
   const SURNAME_POOL = CHARACTERS.filter(
@@ -1305,12 +1391,112 @@
       })
       .filter(Boolean);
 
-  const TYPE_LABEL = { halo: "ヘイロー", surname: "苗字", birthday: "誕生日" };
+  const TYPE_LABEL = { halo: "ヘイロー", surname: "苗字", birthday: "誕生日", trivia: "雑学" };
 
   function updateReviewBadge() {
     const n = missItems().length;
     $("review-desc").textContent = n > 0 ? `間違えた問題 ${n}問に再挑戦` : "間違えた問題を再挑戦";
   }
+
+  /* ---- 推し(お気に入り) ---- */
+  const FAV_KEY = "haloquiz_favs";
+  const loadFavs = () => {
+    try { return JSON.parse(localStorage.getItem(FAV_KEY)) || []; } catch { return []; }
+  };
+  const isFav = (id) => loadFavs().includes(id);
+  const toggleFav = (id) => {
+    let f = loadFavs();
+    if (f.includes(id)) f = f.filter((x) => x !== id);
+    else f.push(id);
+    try { localStorage.setItem(FAV_KEY, JSON.stringify(f)); } catch {}
+  };
+  const HEART_SVG = '<svg class="icon" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.51 4.04 3 5.5l7 7z"/></svg>';
+
+  // トップページの推し一覧（タップで図鑑詳細を開く）
+  function renderFavRow() {
+    const favs = loadFavs().map((id) => CHARACTERS.find((c) => c.id === id)).filter(Boolean);
+    const row = $("fav-row");
+    row.classList.toggle("hidden", favs.length === 0);
+    row.innerHTML = "";
+    if (!favs.length) return;
+    const label = document.createElement("span");
+    label.className = "fav-label";
+    label.textContent = "💙 推し";
+    row.appendChild(label);
+    favs.slice(0, 8).forEach((c) => {
+      const face = document.createElement("span");
+      face.className = "face" + (c.face ? "" : " unknown");
+      if (c.face) face.innerHTML = `<img src="images/face/${c.id}.png" alt="${c.name}">`;
+      face.title = c.name;
+      face.addEventListener("click", () => {
+        studyList = loadFavs().map((id) => CHARACTERS.find((x) => x.id === id)).filter(Boolean);
+        openDetail(studyList.indexOf(c));
+      });
+      row.appendChild(face);
+    });
+    if (favs.length > 8) {
+      const more = document.createElement("span");
+      more.className = "fav-more";
+      more.textContent = `+${favs.length - 8}`;
+      row.appendChild(more);
+    }
+  }
+
+  /* ---- 出題範囲(学園・部活)フィルタ ---- */
+  let rangeSchool = "すべて";
+  let rangeClub = "すべて";
+
+  const rangeFilter = (c) => {
+    if (rangeSchool !== "すべて" && schoolKey(c) !== rangeSchool) return false;
+    if (rangeClub !== "すべて" && c.club !== rangeClub) return false;
+    return true;
+  };
+
+  function buildRangeChips() {
+    const counts = {};
+    CHARACTERS.forEach((c) => {
+      const k = schoolKey(c);
+      counts[k] = (counts[k] || 0) + 1;
+    });
+    const keys = ["すべて", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+    const box = $("range-chips");
+    keys.forEach((k) => {
+      const chip = document.createElement("button");
+      chip.className = "chip" + (k === "すべて" ? " selected" : "");
+      chip.textContent = k === "すべて" ? "すべて" : `${k} (${counts[k]})`;
+      chip.addEventListener("click", () => {
+        rangeSchool = k;
+        rangeClub = "すべて";
+        document.querySelectorAll("#range-chips .chip").forEach((c) => c.classList.remove("selected"));
+        chip.classList.add("selected");
+        buildClubSelect();
+      });
+      box.appendChild(chip);
+    });
+    buildClubSelect();
+  }
+
+  function buildClubSelect() {
+    const chars = CHARACTERS.filter((c) => rangeSchool === "すべて" || schoolKey(c) === rangeSchool);
+    const counts = {};
+    chars.forEach((c) => {
+      if (c.club && c.club !== "-") counts[c.club] = (counts[c.club] || 0) + 1;
+    });
+    const sel = $("range-club");
+    sel.innerHTML = '<option value="すべて">すべての部活</option>';
+    Object.keys(counts)
+      .filter((k) => counts[k] >= 2)
+      .sort((a, b) => counts[b] - counts[a])
+      .forEach((k) => {
+        const opt = document.createElement("option");
+        opt.value = k;
+        opt.textContent = `${k} (${counts[k]}人)`;
+        sel.appendChild(opt);
+      });
+    sel.value = "すべて";
+  }
+
+  $("range-club").addEventListener("change", (e) => { rangeClub = e.target.value; });
 
   let mode = "normal";        // normal | hard | surname | study
   let surnameFmt = "choice";  // choice | input
@@ -1351,6 +1537,7 @@
     mode = cardEl.dataset.mode;
     $("surname-options").classList.toggle("hidden", mode !== "surname");
     $("quiz-config").classList.toggle("hidden", mode === "study");
+    $("range-config").classList.toggle("hidden", mode === "review");
     $("btn-start").textContent = mode === "study" ? "図鑑を開く" : "スタート";
   });
 
@@ -1386,27 +1573,80 @@
   });
 
   /* ---------- quiz flow ---------- */
+  const TRIVIA_POOL = CHARACTERS.filter((c) => c.bio || (c.hobby && c.hobby !== "-"));
+
   function pool() {
     if (mode === "surname") return SURNAME_POOL;
     if (mode === "birthday") return BIRTHDAY_POOL;
+    if (mode === "trivia") return TRIVIA_POOL;
     if (mode === "review") return missItems();
     return CHARACTERS;
   }
 
-  // 出題アイテムの問題タイプ (halo | surname | birthday)
+  // 出題アイテムの問題タイプ (halo | surname | birthday | trivia)
   const qTypeOf = (item) =>
     mode === "review" ? item.qtype :
     mode === "surname" ? "surname" :
-    mode === "birthday" ? "birthday" : "halo";
+    mode === "birthday" ? "birthday" :
+    mode === "trivia" ? "trivia" : "halo";
+
+  // 本人の名前・苗字・読みを◯◯に伏せる（雑学クイズ用）
+  function maskName(text, c) {
+    let t = text;
+    const words = [c.fullName, c.name];
+    if (c.fullName !== c.name && c.fullName.endsWith(c.name)) {
+      words.push(c.fullName.slice(0, c.fullName.length - c.name.length));
+    }
+    if (c.reading) words.push(c.reading);
+    words.sort((a, b) => b.length - a.length).forEach((w) => {
+      if (w) t = t.split(w).join("◯◯");
+    });
+    return t;
+  }
+
+  // 雑学の出題文を生成 {kind, text}
+  function buildTrivia(c) {
+    const kinds = [];
+    if (c.bio) kinds.push("bio");
+    if (c.hobby && c.hobby !== "-") kinds.push("hobby");
+    const kind = kinds[Math.floor(Math.random() * kinds.length)];
+    return kind === "bio"
+      ? { kind, text: maskName(c.bio, c) }
+      : { kind, text: `趣味：『${maskName(c.hobby, c)}』` };
+  }
+
+  // 推しを3倍の重みで抽選してキューを作る
+  function buildQueue(p, n) {
+    const weighted = [];
+    p.forEach((c) => {
+      const w = isFav(c.id) ? 3 : 1;
+      for (let i = 0; i < w; i++) weighted.push(c);
+    });
+    const seen = new Set();
+    const q = [];
+    for (const c of shuffle(weighted)) {
+      const key = c.id + ":" + (c.qtype || "");
+      if (seen.has(key)) continue;
+      seen.add(key);
+      q.push(c);
+      if (q.length >= n) break;
+    }
+    return q;
+  }
 
   function startGame() {
-    const p = pool();
+    let p = pool();
     if (mode === "review" && p.length === 0) {
-      alert("復習するキャラはいません！\nクイズで間違えるとここに追加されます。");
+      alert("復習する問題はありません！\nクイズで間違えるとここに追加されます。");
+      return;
+    }
+    if (mode !== "review") p = p.filter(rangeFilter);
+    if (p.length === 0) {
+      alert("選んだ出題範囲に該当するキャラがいません。\n学園・部活の絞り込みを変更してください。");
       return;
     }
     const n = questionCount === "all" ? p.length : Math.min(Number(questionCount), p.length);
-    queue = shuffle(p).slice(0, n);
+    queue = mode === "review" ? shuffle(p).slice(0, n) : buildQueue(p, n);
     qIndex = 0;
     score = 0;
     streak = 0;
@@ -1467,6 +1707,7 @@
     const typing = mode === "surname" && surnameFmt === "input";
     const pre = mode === "review" ? "【復習】" : "";
 
+    $("q-trivia").classList.add("hidden");
     if (qt === "surname" || qt === "birthday") {
       $("q-halo-frame").classList.add("hidden");
       $("q-portrait").classList.remove("hidden");
@@ -1474,6 +1715,13 @@
       $("q-text").textContent = pre + (qt === "birthday"
         ? `「${char.name}」の誕生日はいつ？`
         : `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`);
+    } else if (qt === "trivia") {
+      $("q-halo-frame").classList.add("hidden");
+      $("q-portrait").classList.add("hidden");
+      const tq = buildTrivia(char);
+      $("q-trivia").textContent = tq.text;
+      $("q-trivia").classList.remove("hidden");
+      $("q-text").textContent = pre + (tq.kind === "bio" ? "この説明文の生徒は誰？" : "この趣味の持ち主は誰？");
     } else {
       $("q-halo-frame").classList.remove("hidden");
       $("q-portrait").classList.add("hidden");
@@ -1519,6 +1767,7 @@
       if (mode === "review") clearMiss(char.id, qt);
       stampEffect("〇", true);
       fxCorrect();
+      if (isFav(char.id)) fxFav();
     } else {
       streak = 0;
       misses.push({ char, pickedLabel });
@@ -1562,7 +1811,7 @@
     $("r-view").classList.remove("hidden");
 
     const judgeEl = $("rv-judge");
-    judgeEl.textContent = correct ? "正解！" : "不正解…";
+    judgeEl.textContent = correct ? (isFav(char.id) ? "推しに正解！💙" : "正解！") : "不正解…";
     judgeEl.className = "reveal-judge " + (correct ? "ok" : "ng");
 
     $("rv-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
@@ -1585,7 +1834,21 @@
 
   /* ---------- effects ---------- */
   const FX_COLORS = ["#128afa", "#63c8f6", "#fdd35c", "#2eb872", "#ff8fb1", "#b28bff", "#ff9d5c"];
+  const FAV_COLORS = ["#ff5c8a", "#ff8fb1", "#ffc2d4", "#63c8f6", "#ffffff"];
   const fxLayer = () => $("fx-layer");
+
+  // 推しに正解したときの専用演出
+  function fxFav() {
+    confettiBurst(80, FAV_COLORS);
+    emojiRain(["💙", "💖", "💕", "✨"], 14);
+    const b = document.createElement("div");
+    b.className = "streak-banner fav";
+    b.textContent = "💙 推し！";
+    b.style.top = "52%";
+    b.style.fontSize = "2.3rem";
+    fxLayer().appendChild(b);
+    setTimeout(() => b.remove(), 1450);
+  }
 
   // 連続正解でエスカレートするパチスロ風演出
   // tier1(3連続〜): 金フラッシュ+バナー / tier2(5〜): 爆発+ズームパンチ
@@ -1747,13 +2010,13 @@
     card.classList.add("zoom-punch");
   }
 
-  function confettiBurst(count) {
+  function confettiBurst(count, colors = FX_COLORS) {
     const frag = document.createDocumentFragment();
     for (let i = 0; i < count; i++) {
       const p = document.createElement("div");
       p.className = "confetti";
       p.style.left = Math.random() * 100 + "%";
-      p.style.background = FX_COLORS[Math.floor(Math.random() * FX_COLORS.length)];
+      p.style.background = colors[Math.floor(Math.random() * colors.length)];
       p.style.animationDuration = 0.9 + Math.random() * 1.4 + "s";
       p.style.animationDelay = Math.random() * 0.4 + "s";
       p.style.transform = `rotate(${Math.random() * 360}deg)`;
@@ -1871,12 +2134,12 @@
       const k = schoolKey(c);
       counts[k] = (counts[k] || 0) + 1;
     });
-    const keys = ["すべて", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
+    const keys = ["すべて", "__fav__", ...Object.keys(counts).sort((a, b) => counts[b] - counts[a])];
     const box = $("school-chips");
     keys.forEach((k) => {
       const chip = document.createElement("button");
       chip.className = "chip" + (k === "すべて" ? " selected" : "");
-      chip.textContent = k === "すべて" ? `すべて (${CHARACTERS.length})` : `${k} (${counts[k]})`;
+      chip.textContent = k === "すべて" ? `すべて (${CHARACTERS.length})` : k === "__fav__" ? "💙 推し" : `${k} (${counts[k]})`;
       chip.dataset.school = k;
       chip.addEventListener("click", () => {
         studySchool = k;
@@ -1891,7 +2154,9 @@
   function renderStudyGrid() {
     const q = $("study-search").value.trim();
     studyList = CHARACTERS.filter((c) => {
-      if (studySchool !== "すべて" && schoolKey(c) !== studySchool) return false;
+      if (studySchool === "__fav__") {
+        if (!isFav(c.id)) return false;
+      } else if (studySchool !== "すべて" && schoolKey(c) !== studySchool) return false;
       if (q && !c.name.includes(q) && !c.fullName.includes(q) && !(c.reading || "").includes(q)) return false;
       return true;
     });
@@ -1903,8 +2168,15 @@
       const item = document.createElement("div");
       item.className = "study-item";
       const src = studyView === "face" && c.face ? `images/face/${c.id}.png` : `images/${c.id}.png`;
-      item.innerHTML = `<img src="${src}" loading="lazy" alt=""${studyView === "face" ? ' style="object-fit: cover; padding: 0;"' : ""}><span class="s-name">${c.name}</span>`;
+      item.innerHTML =
+        `<button class="fav-btn${isFav(c.id) ? " on" : ""}" title="推しに登録">${HEART_SVG}</button>` +
+        `<img src="${src}" loading="lazy" alt=""${studyView === "face" ? ' style="object-fit: cover; padding: 0;"' : ""}><span class="s-name">${c.name}</span>`;
       item.addEventListener("click", () => openDetail(i));
+      item.querySelector(".fav-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        toggleFav(c.id);
+        e.currentTarget.classList.toggle("on", isFav(c.id));
+      });
       frag.appendChild(item);
     });
     grid.appendChild(frag);
@@ -1916,7 +2188,8 @@
     studyIndex = i;
     const c = studyList[i];
     $("sd-portrait").src = c.full ? `images/full/${c.id}.png` : `images/${c.id}.png`;
-    $("sd-fullname").textContent = c.fullName;
+    $("sd-name-text").textContent = c.fullName;
+    $("sd-fav").classList.toggle("on", isFav(c.id));
     $("sd-reading").textContent = c.reading ? `（${c.reading}）` : "";
     $("sd-halo").src = `images/${c.id}.png`;
     const dash = (v) => (v && v !== "-" ? v : "—");
@@ -1930,6 +2203,14 @@
     $("sd-bio").classList.toggle("hidden", !c.bio);
     $("study-modal").classList.remove("hidden");
   }
+
+  $("sd-fav").addEventListener("click", () => {
+    const c = studyList[studyIndex];
+    if (!c) return;
+    toggleFav(c.id);
+    $("sd-fav").classList.toggle("on", isFav(c.id));
+    if (!screens.study.classList.contains("hidden")) renderStudyGrid();
+  });
 
   const closeModal = () => $("study-modal").classList.add("hidden");
   $("modal-close").addEventListener("click", closeModal);
@@ -1963,7 +2244,9 @@
     }
   });
 
+  buildRangeChips();
   updateReviewBadge();
+  renderFavRow();
 })();
 </script>
 </body>
