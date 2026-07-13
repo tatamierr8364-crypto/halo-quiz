@@ -213,7 +213,17 @@
     font-weight: 900;
     font-size: 0.9rem;
   }
-  .mode-card .m-emoji { font-size: 1.7rem; }
+  .icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .m-icon { display: block; color: var(--ba-blue); margin-bottom: 4px; }
+  .m-icon svg { width: 30px; height: 30px; display: block; margin: 0 auto; filter: drop-shadow(0 2px 4px rgba(18, 138, 250, 0.3)); }
+  .seg svg { width: 15px; height: 15px; vertical-align: -2.5px; margin-right: 5px; }
+  .fx-toggle svg { width: 17px; height: 17px; vertical-align: -3px; color: var(--ba-blue); }
   .mode-card .m-name { font-weight: 800; font-size: 0.94rem; margin: 4px 0 2px; }
   .mode-card .m-desc { font-size: 0.7rem; color: #7d8a99; line-height: 1.5; }
   .sub-options {
@@ -1038,7 +1048,7 @@
     .quiz-logo-sub { font-size: 0.72rem; letter-spacing: 0.3em; margin-top: 6px; }
     .mode-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
     .mode-card { padding: 10px 6px; }
-    .mode-card .m-emoji { font-size: 1.4rem; }
+    .m-icon svg { width: 24px; height: 24px; }
     .mode-card .m-name { font-size: 0.85rem; }
     .mode-card .m-desc { font-size: 0.64rem; }
     .halo-frame { width: 160px; height: 160px; }
@@ -1086,27 +1096,27 @@
     <p class="section-label">モードを選んでください</p>
     <div class="mode-cards" id="mode-cards">
       <div class="mode-card selected" data-mode="normal">
-        <span class="m-emoji">😇</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="5.5" rx="7" ry="2.6" transform="rotate(-10 12 5.5)"/><circle cx="12" cy="14" r="3.6"/><path d="M5.5 22c1.2-2.8 4-3.9 6.5-3.9s5.3 1.1 6.5 3.9"/></svg></span>
         <div><div class="m-name">ヘイロークイズ</div><div class="m-desc">定番の4択</div></div>
       </div>
       <div class="mode-card" data-mode="hard">
-        <span class="m-emoji">🔥</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></span>
         <div><div class="m-name">ハードモード</div><div class="m-desc">8択・同じ学園が混ざる</div></div>
       </div>
       <div class="mode-card" data-mode="surname">
-        <span class="m-emoji">📛</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M6.2 15a3 3 0 0 1 5.6 0"/><path d="M15 10h4"/><path d="M15 14h4"/></svg></span>
         <div><div class="m-name">苗字当てクイズ</div><div class="m-desc">立ち絵から苗字を当てる</div></div>
       </div>
       <div class="mode-card" data-mode="birthday">
-        <span class="m-emoji">🎂</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4h.01"/><path d="M12 4h.01"/><path d="M17 4h.01"/></svg></span>
         <div><div class="m-name">誕生日当てクイズ</div><div class="m-desc">生徒の誕生日を当てる</div></div>
       </div>
       <div class="mode-card" data-mode="review">
-        <span class="m-emoji">🔁</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></span>
         <div><div class="m-name">復習モード</div><div class="m-desc" id="review-desc">間違えたキャラを再挑戦</div></div>
       </div>
       <div class="mode-card" data-mode="study">
-        <span class="m-emoji">📖</span>
+        <span class="m-icon"><svg class="icon" viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></span>
         <div><div class="m-name">学習モード</div><div class="m-desc">全キャラの図鑑で暗記</div></div>
       </div>
     </div>
@@ -1127,7 +1137,7 @@
 
       <div class="fx-toggle" id="fx-toggle">
         <span class="track"><span class="knob"></span></span>
-        <span>🎆 ド派手エフェクト</span>
+        <span><svg class="icon" viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px;color:var(--ba-blue);"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> ド派手エフェクト</span>
       </div>
     </div>
 
@@ -1193,8 +1203,8 @@
     <div class="study-tools">
       <input type="text" id="study-search" placeholder="🔍 名前で検索" autocomplete="off">
       <div class="sub-options" style="margin: 0;" id="study-view-toggle">
-        <button class="seg selected" data-view="halo">😇 ヘイロー</button>
-        <button class="seg" data-view="face">🙂 顔</button>
+        <button class="seg selected" data-view="halo"><svg class="icon" viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="9" ry="3.8" transform="rotate(-14 12 12)"/></svg>ヘイロー</button>
+        <button class="seg" data-view="face"><svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>顔</button>
       </div>
     </div>
     <div class="school-chips" id="school-chips"></div>
@@ -1261,19 +1271,49 @@
   const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "") || "その他";
   const BIRTHDAY_POOL = CHARACTERS.filter((c) => c.birthday && c.birthday !== "-");
 
-  /* ---- 復習モード: 間違えたキャラをlocalStorageに記録 ---- */
-  const MISS_KEY = "haloquiz_misses";
+  /* ---- 復習モード: 間違えた問題を「タイプ:キャラID」でlocalStorageに記録 ---- */
+  const MISS_KEY = "haloquiz_misses_v2";
   const loadMisses = () => {
-    try { return JSON.parse(localStorage.getItem(MISS_KEY)) || {}; } catch { return {}; }
+    try {
+      const v2 = JSON.parse(localStorage.getItem(MISS_KEY));
+      if (v2) return v2;
+    } catch {}
+    // 旧形式(IDのみ=ヘイロー問題)からの引き継ぎ
+    try {
+      const v1 = JSON.parse(localStorage.getItem("haloquiz_misses"));
+      if (v1) {
+        const m = {};
+        Object.keys(v1).forEach((id) => { m["halo:" + id] = v1[id]; });
+        return m;
+      }
+    } catch {}
+    return {};
   };
-  const saveMisses = (m) => { try { localStorage.setItem(MISS_KEY, JSON.stringify(m)); } catch {} };
-  const addMiss = (id) => { const m = loadMisses(); m[id] = (m[id] || 0) + 1; saveMisses(m); };
-  const clearMiss = (id) => { const m = loadMisses(); delete m[id]; saveMisses(m); };
-  const missChars = () => { const m = loadMisses(); return CHARACTERS.filter((c) => m[c.id]); };
+  const saveMisses = (m) => {
+    try {
+      localStorage.setItem(MISS_KEY, JSON.stringify(m));
+      localStorage.removeItem("haloquiz_misses");
+    } catch {}
+  };
+  const addMiss = (id, type) => { const m = loadMisses(); const k = `${type}:${id}`; m[k] = (m[k] || 0) + 1; saveMisses(m); };
+  const clearMiss = (id, type) => { const m = loadMisses(); delete m[`${type}:${id}`]; saveMisses(m); };
+  // 記録された問題を出題用アイテム({...char, qtype})に変換
+  const missItems = () =>
+    Object.keys(loadMisses())
+      .map((k) => {
+        const i = k.indexOf(":");
+        const type = k.slice(0, i);
+        const id = k.slice(i + 1);
+        const base = type === "surname" ? SURNAME_POOL.find((c) => c.id === id) : CHARACTERS.find((c) => c.id === id);
+        return base ? { ...base, qtype: type } : null;
+      })
+      .filter(Boolean);
+
+  const TYPE_LABEL = { halo: "ヘイロー", surname: "苗字", birthday: "誕生日" };
 
   function updateReviewBadge() {
-    const n = missChars().length;
-    $("review-desc").textContent = n > 0 ? `間違えたキャラ ${n}体に再挑戦` : "間違えたキャラを再挑戦";
+    const n = missItems().length;
+    $("review-desc").textContent = n > 0 ? `間違えた問題 ${n}問に再挑戦` : "間違えた問題を再挑戦";
   }
 
   let mode = "normal";        // normal | hard | surname | study
@@ -1358,9 +1398,15 @@
   function pool() {
     if (mode === "surname") return SURNAME_POOL;
     if (mode === "birthday") return BIRTHDAY_POOL;
-    if (mode === "review") return missChars();
+    if (mode === "review") return missItems();
     return CHARACTERS;
   }
+
+  // 出題アイテムの問題タイプ (halo | surname | birthday)
+  const qTypeOf = (item) =>
+    mode === "review" ? item.qtype :
+    mode === "surname" ? "surname" :
+    mode === "birthday" ? "birthday" : "halo";
 
   function startGame() {
     const p = pool();
@@ -1386,14 +1432,15 @@
   }
 
   function buildOptions(char) {
-    if (mode === "birthday") {
+    const qt = qTypeOf(char);
+    if (qt === "birthday") {
       const others = shuffle([...new Set(BIRTHDAY_POOL.map((c) => c.birthday))].filter((b) => b !== char.birthday)).slice(0, 3);
       return shuffle([
         { label: char.birthday, correct: true, faceChar: null },
         ...others.map((b) => ({ label: b, correct: false, faceChar: null })),
       ]);
     }
-    if (mode === "surname") {
+    if (qt === "surname") {
       const others = shuffle([...new Set(SURNAME_POOL.map((c) => c.surname))].filter((s) => s !== char.surname)).slice(0, 3);
       return shuffle([
         { label: char.surname, correct: true, faceChar: null },
@@ -1425,23 +1472,22 @@
     updateStatus();
 
     const char = queue[qIndex];
+    const qt = qTypeOf(char);
     const typing = mode === "surname" && surnameFmt === "input";
+    const pre = mode === "review" ? "【復習】" : "";
 
-    if (mode === "surname" || mode === "birthday") {
+    if (qt === "surname" || qt === "birthday") {
       $("q-halo-frame").classList.add("hidden");
       $("q-portrait").classList.remove("hidden");
       $("q-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
-      $("q-text").textContent = mode === "birthday"
+      $("q-text").textContent = pre + (qt === "birthday"
         ? `「${char.name}」の誕生日はいつ？`
-        : `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`;
+        : `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`);
     } else {
       $("q-halo-frame").classList.remove("hidden");
       $("q-portrait").classList.add("hidden");
       $("q-image").src = `images/${char.id}.png`;
-      $("q-text").textContent =
-        mode === "hard" ? "このヘイローは誰のもの？（8択）" :
-        mode === "review" ? "【復習】このヘイローは誰のもの？" :
-        "このヘイローは誰のもの？";
+      $("q-text").textContent = pre + (mode === "hard" ? "このヘイローは誰のもの？（8択）" : "このヘイローは誰のもの？");
     }
 
     $("q-choices").classList.toggle("hidden", typing);
@@ -1475,16 +1521,17 @@
 
   function judge(correct, pickedLabel) {
     const char = queue[qIndex];
+    const qt = qTypeOf(char);
     if (correct) {
       score++;
       streak++;
-      if (mode === "review") clearMiss(char.id);
+      if (mode === "review") clearMiss(char.id, qt);
       stampEffect("〇", true);
       fxCorrect();
     } else {
       streak = 0;
       misses.push({ char, pickedLabel });
-      addMiss(char.id);
+      addMiss(char.id, qt);
       stampEffect("✕", false);
       fxWrong();
     }
