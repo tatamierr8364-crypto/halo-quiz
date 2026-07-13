@@ -1135,13 +1135,9 @@
         <button class="mode-btn" data-count="all">全問</button>
       </div>
 
-      <div class="fx-toggle" id="fx-toggle">
-        <span class="track"><span class="knob"></span></span>
-        <span><svg class="icon" viewBox="0 0 24 24" style="width:17px;height:17px;vertical-align:-3px;color:var(--ba-blue);"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/></svg> ド派手エフェクト</span>
-      </div>
     </div>
 
-    <button class="primary-btn" id="btn-start">スタート</button>
+    <button class="primary-btn" id="btn-start" style="margin-top: 26px;">スタート</button>
   </div>
 
   <!-- クイズ画面 -->
@@ -1318,7 +1314,7 @@
 
   let mode = "normal";        // normal | hard | surname | study
   let surnameFmt = "choice";  // choice | input
-  let hade = false;
+  const hade = true; // ド派手エフェクト常時ON
   let questionCount = 10;
   let queue = [];
   let qIndex = 0;
@@ -1372,11 +1368,6 @@
     document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("selected"));
     btn.classList.add("selected");
     questionCount = btn.dataset.count;
-  });
-
-  $("fx-toggle").addEventListener("click", () => {
-    hade = !hade;
-    $("fx-toggle").classList.toggle("on", hade);
   });
 
   $("btn-start").addEventListener("click", () => {
