@@ -171,7 +171,7 @@
   }
   .mode-cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
   }
   .mode-card {
@@ -1082,6 +1082,14 @@
         <span class="m-emoji">📛</span>
         <div><div class="m-name">苗字当てクイズ</div><div class="m-desc">立ち絵から苗字を当てる</div></div>
       </div>
+      <div class="mode-card" data-mode="birthday">
+        <span class="m-emoji">🎂</span>
+        <div><div class="m-name">誕生日当てクイズ</div><div class="m-desc">生徒の誕生日を当てる</div></div>
+      </div>
+      <div class="mode-card" data-mode="review">
+        <span class="m-emoji">🔁</span>
+        <div><div class="m-name">復習モード</div><div class="m-desc" id="review-desc">間違えたキャラを再挑戦</div></div>
+      </div>
       <div class="mode-card" data-mode="study">
         <span class="m-emoji">📖</span>
         <div><div class="m-name">学習モード</div><div class="m-desc">全キャラの図鑑で暗記</div></div>
@@ -1169,6 +1177,10 @@
     </div>
     <div class="study-tools">
       <input type="text" id="study-search" placeholder="🔍 名前で検索" autocomplete="off">
+      <div class="sub-options" style="margin: 0;" id="study-view-toggle">
+        <button class="seg selected" data-view="halo">😇 ヘイロー</button>
+        <button class="seg" data-view="face">🙂 顔</button>
+      </div>
     </div>
     <div class="school-chips" id="school-chips"></div>
     <div class="study-count" id="study-count"></div>
@@ -1203,6 +1215,11 @@
           <tr><th>学園</th><td id="sd-school"></td></tr>
           <tr><th>部活</th><td id="sd-club"></td></tr>
           <tr><th>誕生日</th><td id="sd-birthday"></td></tr>
+          <tr><th>年齢</th><td id="sd-age"></td></tr>
+          <tr><th>身長</th><td id="sd-height"></td></tr>
+          <tr><th>趣味</th><td id="sd-hobby"></td></tr>
+          <tr><th>CV</th><td id="sd-cv"></td></tr>
+          <tr><th>イラスト</th><td id="sd-illust"></td></tr>
         </table>
       </div>
     </div>
@@ -1218,13 +1235,32 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const screens = { start: $("screen-start"), quiz: $("screen-quiz"), study: $("screen-study"), result: $("screen-result") };
-  const show = (name) => Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
+  const show = (name) => {
+    Object.entries(screens).forEach(([k, el]) => el.classList.toggle("hidden", k !== name));
+    if (name === "start") updateReviewBadge();
+  };
 
   const SURNAME_POOL = CHARACTERS.filter(
     (c) => c.fullName !== c.name && c.fullName.endsWith(c.name)
   ).map((c) => ({ ...c, surname: c.fullName.slice(0, c.fullName.length - c.name.length) }));
 
   const schoolKey = (c) => (c.school || "").replace(/[0-9０-９]+年生$/, "") || "その他";
+  const BIRTHDAY_POOL = CHARACTERS.filter((c) => c.birthday && c.birthday !== "-");
+
+  /* ---- 復習モード: 間違えたキャラをlocalStorageに記録 ---- */
+  const MISS_KEY = "haloquiz_misses";
+  const loadMisses = () => {
+    try { return JSON.parse(localStorage.getItem(MISS_KEY)) || {}; } catch { return {}; }
+  };
+  const saveMisses = (m) => { try { localStorage.setItem(MISS_KEY, JSON.stringify(m)); } catch {} };
+  const addMiss = (id) => { const m = loadMisses(); m[id] = (m[id] || 0) + 1; saveMisses(m); };
+  const clearMiss = (id) => { const m = loadMisses(); delete m[id]; saveMisses(m); };
+  const missChars = () => { const m = loadMisses(); return CHARACTERS.filter((c) => m[c.id]); };
+
+  function updateReviewBadge() {
+    const n = missChars().length;
+    $("review-desc").textContent = n > 0 ? `間違えたキャラ ${n}体に再挑戦` : "間違えたキャラを再挑戦";
+  }
 
   let mode = "normal";        // normal | hard | surname | study
   let surnameFmt = "choice";  // choice | input
@@ -1306,11 +1342,18 @@
 
   /* ---------- quiz flow ---------- */
   function pool() {
-    return mode === "surname" ? SURNAME_POOL : CHARACTERS;
+    if (mode === "surname") return SURNAME_POOL;
+    if (mode === "birthday") return BIRTHDAY_POOL;
+    if (mode === "review") return missChars();
+    return CHARACTERS;
   }
 
   function startGame() {
     const p = pool();
+    if (mode === "review" && p.length === 0) {
+      alert("復習するキャラはいません！\nクイズで間違えるとここに追加されます。");
+      return;
+    }
     const n = questionCount === "all" ? p.length : Math.min(Number(questionCount), p.length);
     queue = shuffle(p).slice(0, n);
     qIndex = 0;
@@ -1329,6 +1372,13 @@
   }
 
   function buildOptions(char) {
+    if (mode === "birthday") {
+      const others = shuffle([...new Set(BIRTHDAY_POOL.map((c) => c.birthday))].filter((b) => b !== char.birthday)).slice(0, 3);
+      return shuffle([
+        { label: char.birthday, correct: true, faceChar: null },
+        ...others.map((b) => ({ label: b, correct: false, faceChar: null })),
+      ]);
+    }
     if (mode === "surname") {
       const others = shuffle([...new Set(SURNAME_POOL.map((c) => c.surname))].filter((s) => s !== char.surname)).slice(0, 3);
       return shuffle([
@@ -1363,16 +1413,21 @@
     const char = queue[qIndex];
     const typing = mode === "surname" && surnameFmt === "input";
 
-    if (mode === "surname") {
+    if (mode === "surname" || mode === "birthday") {
       $("q-halo-frame").classList.add("hidden");
       $("q-portrait").classList.remove("hidden");
       $("q-portrait").src = char.full ? `images/full/${char.id}.png` : `images/${char.id}.png`;
-      $("q-text").textContent = `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`;
+      $("q-text").textContent = mode === "birthday"
+        ? `「${char.name}」の誕生日はいつ？`
+        : `「${char.name}」の苗字は${typing ? "？" : "どれ？"}`;
     } else {
       $("q-halo-frame").classList.remove("hidden");
       $("q-portrait").classList.add("hidden");
       $("q-image").src = `images/${char.id}.png`;
-      $("q-text").textContent = mode === "hard" ? "このヘイローは誰のもの？（8択）" : "このヘイローは誰のもの？";
+      $("q-text").textContent =
+        mode === "hard" ? "このヘイローは誰のもの？（8択）" :
+        mode === "review" ? "【復習】このヘイローは誰のもの？" :
+        "このヘイローは誰のもの？";
     }
 
     $("q-choices").classList.toggle("hidden", typing);
@@ -1409,11 +1464,13 @@
     if (correct) {
       score++;
       streak++;
+      if (mode === "review") clearMiss(char.id);
       stampEffect("〇", true);
       fxCorrect();
     } else {
       streak = 0;
       misses.push({ char, pickedLabel });
+      addMiss(char.id);
       stampEffect("✕", false);
       fxWrong();
     }
@@ -1739,6 +1796,16 @@
   let studyList = [];
   let studyIndex = 0;
   let studySchool = "すべて";
+  let studyView = "halo";
+
+  $("study-view-toggle").addEventListener("click", (e) => {
+    const seg = e.target.closest(".seg");
+    if (!seg) return;
+    document.querySelectorAll("#study-view-toggle .seg").forEach((s) => s.classList.remove("selected"));
+    seg.classList.add("selected");
+    studyView = seg.dataset.view;
+    renderStudyGrid();
+  });
 
   function openStudy() {
     show("study");
@@ -1779,13 +1846,16 @@
     $("study-count").textContent = `${studyList.length}件`;
     const grid = $("study-grid");
     grid.innerHTML = "";
+    const frag = document.createDocumentFragment();
     studyList.forEach((c, i) => {
       const item = document.createElement("div");
       item.className = "study-item";
-      item.innerHTML = `<img src="images/${c.id}.png" loading="lazy" alt=""><span class="s-name">${c.name}</span>`;
+      const src = studyView === "face" && c.face ? `images/face/${c.id}.png` : `images/${c.id}.png`;
+      item.innerHTML = `<img src="${src}" loading="lazy" alt=""${studyView === "face" ? ' style="object-fit: cover; padding: 0;"' : ""}><span class="s-name">${c.name}</span>`;
       item.addEventListener("click", () => openDetail(i));
-      grid.appendChild(item);
+      frag.appendChild(item);
     });
+    grid.appendChild(frag);
   }
 
   $("study-search").addEventListener("input", renderStudyGrid);
@@ -1801,6 +1871,11 @@
     $("sd-school").textContent = dash(c.school);
     $("sd-club").textContent = dash(c.club);
     $("sd-birthday").textContent = dash(c.birthday);
+    $("sd-age").textContent = dash(c.age);
+    $("sd-height").textContent = dash(c.height);
+    $("sd-hobby").textContent = dash(c.hobby);
+    $("sd-cv").textContent = dash(c.cv);
+    $("sd-illust").textContent = dash(c.illust);
     $("study-modal").classList.remove("hidden");
   }
 
@@ -1835,6 +1910,8 @@
       if (btn && !btn.disabled) btn.click();
     }
   });
+
+  updateReviewBadge();
 })();
 </script>
 </body>
