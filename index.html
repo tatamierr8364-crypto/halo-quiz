@@ -647,6 +647,21 @@
   .study-item .s-name { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 4px; }
   .study-count { font-size: 0.75rem; color: #7d8a99; margin-bottom: 8px; text-align: right; }
 
+  /* 基本情報(キャラ説明文) */
+  .bio {
+    margin: 16px auto 4px;
+    max-width: 560px;
+    text-align: left;
+    font-size: 0.88rem;
+    font-weight: 500;
+    line-height: 1.8;
+    color: var(--ba-navy);
+    background: linear-gradient(90deg, rgba(234, 244, 253, 0.9), rgba(234, 244, 253, 0.25));
+    border-left: 4px solid var(--ba-blue);
+    padding: 12px 16px;
+    border-radius: 0 10px 10px 0;
+  }
+
   /* 学習モード詳細モーダル */
   .modal {
     position: fixed;
@@ -1218,11 +1233,10 @@
           <tr><th>年齢</th><td id="sd-age"></td></tr>
           <tr><th>身長</th><td id="sd-height"></td></tr>
           <tr><th>趣味</th><td id="sd-hobby"></td></tr>
-          <tr><th>CV</th><td id="sd-cv"></td></tr>
-          <tr><th>イラスト</th><td id="sd-illust"></td></tr>
         </table>
       </div>
     </div>
+    <div class="bio hidden" id="sd-bio"></div>
     <div class="modal-nav">
       <button id="sd-prev">← 前へ</button>
       <button id="sd-next">次へ →</button>
@@ -1874,8 +1888,8 @@
     $("sd-age").textContent = dash(c.age);
     $("sd-height").textContent = dash(c.height);
     $("sd-hobby").textContent = dash(c.hobby);
-    $("sd-cv").textContent = dash(c.cv);
-    $("sd-illust").textContent = dash(c.illust);
+    $("sd-bio").textContent = c.bio || "";
+    $("sd-bio").classList.toggle("hidden", !c.bio);
     $("study-modal").classList.remove("hidden");
   }
 
